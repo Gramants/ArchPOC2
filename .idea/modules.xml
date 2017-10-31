@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MVVM_my_best.iml" filepath="$PROJECT_DIR$/MVVM_my_best.iml" />
+      <module fileurl="file://C:\__LETSGO\ASARCHCOMP\MVVM_best_example\SampleAppArch.iml" filepath="C:\__LETSGO\ASARCHCOMP\MVVM_best_example\SampleAppArch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>

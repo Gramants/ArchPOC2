@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="issue"
+            type="com.cn29.aac.entities.IssueDataModel" />
+        <variable
+            name="contributor"
+            type="com.cn29.aac.entities.ContributorTransformed" />
+    </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:background="@color/colorAccent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:id="@+id/movies_layout"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingRight="16dp"
+                android:textStyle="bold"
+                android:text="@{issue.title}"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/contributor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingRight="16dp"
+                android:textStyle="bold"
+                android:text="@{contributor.title}"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/issue_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="24dp"
+                    android:text="@{issue.body}"
+                    android:textColor="@color/button_grey" />
+
+                <TextView
+                    android:id="@+id/creator_name_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{issue.createdAt}"
+                    android:textColor="@color/button_grey" />
+                <TextView
+                    android:id="@+id/creator_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:paddingRight="16dp"
+                    android:text="@{issue.repositoryUrl}"
+                    android:textColor="@color/button_grey" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>
