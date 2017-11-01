@@ -4,10 +4,10 @@
     <data>
         <variable
             name="issue"
-            type="com.cn29.aac.entities.IssueDataModel" />
+            type="com.ste.arch.entities.IssueDataModel" />
         <variable
             name="contributor"
-            type="com.cn29.aac.entities.ContributorTransformed" />
+            type="com.ste.arch.entities.ContributorTransformed" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
