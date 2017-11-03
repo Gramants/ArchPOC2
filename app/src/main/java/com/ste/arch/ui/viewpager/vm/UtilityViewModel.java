@@ -15,6 +15,8 @@ public class UtilityViewModel extends ViewModel {
     private MutableLiveData<Boolean> liveDataShowProgressInObserverFragments;
     private MutableLiveData<String> livedatasavedstring;
     private MutableLiveData<String> livedatasnackbar;
+
+
     private MutableLiveData<Boolean> liveDataIsInternetConnected;
 
     public void init()

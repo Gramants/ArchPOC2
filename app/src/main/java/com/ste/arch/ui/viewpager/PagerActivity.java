@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.SearchView;
 
@@ -108,7 +109,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
         utilityViewModel.isInternetConnected().observe(this, isInternetConnected -> {
 
-            if (isInternetConnected)
+            if ( (isInternetConnected) && (!TextUtils.isEmpty(mSearchString)) )
             {
                 doSearch(mSearchString);
             }
@@ -129,7 +130,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
             handleSnackBar(snackMsg);
         });
 
-        repositoryViewModel.getApiIssueResponseNew().observe(this,
+        repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
                    Log.e("STEFANO","network call saved issue list by activity in Room");
                 }

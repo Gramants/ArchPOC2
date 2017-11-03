@@ -25,7 +25,7 @@ public class BusinessViewModel extends ViewModel {
     {
         liveDataShowIssueContent= new SingleLiveEvent<>();
         liveDataShowContributorContent= new SingleLiveEvent<>();
-        mIssueDetail = new MediatorLiveData<>();
+
     }
 
 
@@ -40,17 +40,6 @@ public class BusinessViewModel extends ViewModel {
         this.mPersistentStorageProxy=mPersistentStorageProxy;
     }
 
-
-
-    public LiveData<IssueDataModel> loadIssue(int id) {
-
-        Log.e("STEFANO","loadissue by id");
-        mIssueDetail.addSource(
-                mIssueRepository.getIssueFromDb(id), dbResponse -> mIssueDetail.setValue(dbResponse)
-        );
-
-        return mIssueDetail;
-    }
 
 
 
@@ -84,10 +73,7 @@ public class BusinessViewModel extends ViewModel {
         liveDataShowIssueContent.setValue(issueDataModel);
     }
 
-    @NonNull
-    public LiveData<IssueDataModel> getIssue() {
-        return mIssueDetail;
-    }
+
 
 
 

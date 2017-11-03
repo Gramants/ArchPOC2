@@ -3,6 +3,8 @@ package com.ste.arch.repositories;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.entities.NetworkErrorObject;
@@ -10,9 +12,11 @@ import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.Resource;
+import com.ste.arch.repositories.asyncoperations.SelectRecord;
 import com.ste.arch.repositories.database.IssueDao;
 import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
 import com.ste.arch.repositories.asyncoperations.DeleteRecord;
+import com.ste.arch.repositories.database.ProjectDb;
 
 import java.util.List;
 
@@ -26,12 +30,12 @@ public class IssueRepositoryImpl implements IssueRepository {
 
     private IssueDao issueDao;
     private GithubApiService mApiService;
-    private MutableLiveData<NetworkErrorObject> liveDataError = new MutableLiveData<>();
-
+    private ProjectDb db;
     @Inject
-    public IssueRepositoryImpl(IssueDao issueDao, GithubApiService mApiService) {
+    public IssueRepositoryImpl(ProjectDb mDb, IssueDao issueDao, GithubApiService mApiService) {
         this.issueDao = issueDao;
         this.mApiService = mApiService;
+        this.db=mDb;
     }
 
 
@@ -39,19 +43,46 @@ public class IssueRepositoryImpl implements IssueRepository {
         return new NetworkBoundResource<List<IssueDataModel>, List<Issue>>() {
             @Override
             protected void deleteAll(List<Issue> item) {
-                if (item!=null) {
-                issueDao.deleteAll();
+                if (!item.isEmpty()) {
+                    db.beginTransaction();
+                    try {
+                        issueDao.deleteAll();
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+
+
                 }
             }
 
             @Override
             protected void saveCallResult(List<Issue> item) {
-                if (item!=null)
-                {issueDao.insert(DataTranslator.IssueTranslator(item));}
+                if (!item.isEmpty())
+                {
+                    db.beginTransaction();
+                    try {
+                        issueDao.insert(DataTranslator.IssueTranslator(item));
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+
+
+                }
             }
+
+            @Override
+            protected Boolean shouldFetch(@Nullable List<IssueDataModel> data) {
+                //
+                return forceRemote;
+
+            }
+
             @NonNull
             @Override
             protected LiveData<List<IssueDataModel>> loadFromDb() {
+
                 return issueDao.getAllIssue();
             }
 
@@ -65,21 +96,34 @@ public class IssueRepositoryImpl implements IssueRepository {
 
 
 
+
+
+    @Override
+    public LiveData<NetworkErrorObject> getNetworkError() {
+        return null;
+        // not used togliere
+    }
+
+
     public void deleteIssueById(Integer id) {
         new DeleteRecord() {
             @Override
             protected void deleteRecordById() {
-                issueDao.deleteById(id);
+
+                db.beginTransaction();
+                try {
+                    issueDao.deleteById(id);
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
+
             }
 
         };
     }
 
-
-    @Override
-    public LiveData<IssueDataModel> getIssueFromDb(int id) {
-        return issueDao.getIssueById(id);
-    }
 
 
 
@@ -145,9 +189,20 @@ public class IssueRepositoryImpl implements IssueRepository {
     }
 */
 
+
+
     @Override
-    public LiveData<NetworkErrorObject> getNetworkError() {
-        return liveDataError;
+    public LiveData<Resource<IssueDataModel>> getIssueRecordById(int id) {
+
+        return new SelectRecord<IssueDataModel>() {
+            @NonNull
+            @Override
+            protected LiveData<IssueDataModel> selectRecordById() {
+                Log.e("STEFANO","inside the fun record selected "+String.valueOf(id));
+                return issueDao.getIssueById(id);
+            }
+        }.getAsLiveData();
+
     }
 
 

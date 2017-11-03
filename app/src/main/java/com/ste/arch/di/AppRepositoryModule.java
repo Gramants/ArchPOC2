@@ -22,8 +22,8 @@ public class AppRepositoryModule {
 
     @Provides
     @Singleton
-    public IssueRepositoryImpl provideIssueRepositoryImpl(IssueDao issueDao, GithubApiService mApiService) {
-        return new IssueRepositoryImpl(issueDao, mApiService);
+    public IssueRepositoryImpl provideIssueRepositoryImpl(ProjectDb projectDb,IssueDao issueDao, GithubApiService mApiService) {
+        return new IssueRepositoryImpl(projectDb,issueDao, mApiService);
     }
 
     @Provides

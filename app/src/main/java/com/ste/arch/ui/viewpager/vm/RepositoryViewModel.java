@@ -30,9 +30,10 @@ public class RepositoryViewModel extends ViewModel {
 
     private MutableLiveData<QueryString> mQueryStringObject;
     private MutableLiveData<String> mMessageSnackbar;
+    private MutableLiveData<Integer> mSelectedId;
 
     private LiveData<String> mResultMessageSnackbar;
-    private LiveData<List<IssueDataModel>> mResultIssueDataModel;
+   
     private LiveData<List<ContributorDataModel>> mResultContributorDataModel;
 
 
@@ -41,7 +42,9 @@ public class RepositoryViewModel extends ViewModel {
     private PersistentStorageProxy mPersistentStorageProxy;
 
 
-    private LiveData<Resource<List<IssueDataModel>>> mResultIssueDataModelNew;
+    private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
+    private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
+
 
     public void init() {
 
@@ -52,8 +55,16 @@ public class RepositoryViewModel extends ViewModel {
         mQueryStringObject = new MutableLiveData<>();
         mMessageSnackbar = new MutableLiveData<>();
 
+
+        // init issue List and Item observable
+        mResultIssueListDataModel=new MutableLiveData<>();
+
+        // init issue Item  and Id item
+        mResultIssueItemDataModel=new MutableLiveData<>();
+        mSelectedId = new MutableLiveData<>();
+
         //Load async issues   //STEP2-a
-        mResultIssueDataModelNew = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+        mResultIssueListDataModel= Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
 
@@ -67,6 +78,10 @@ public class RepositoryViewModel extends ViewModel {
             return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
         });
 
+        //select a record by id stream on click
+        mResultIssueItemDataModel = Transformations.switchMap(mSelectedId, mSelectedId -> {
+            return  setIssueRecordById(mSelectedId.intValue());
+        });
 
     }
 
@@ -99,8 +114,8 @@ public class RepositoryViewModel extends ViewModel {
 //STEP4
 
     @NonNull
-    public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponseNew() {
-        return mResultIssueDataModelNew;
+    public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponse() {
+        return mResultIssueListDataModel;
     }
 
 
@@ -113,9 +128,38 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
+// -----------  SELECT THe ID
+
+    //STEP1
+    // the initial query string fires 3 transformed stream Load async issues,Load async contributors and send msg to snackbar
+
+    @NonNull
+    public LiveData<Integer> setRecordIdToStream(Integer id) {
+        //get action click with the id
+        mSelectedId.setValue(id);
+        return mSelectedId;
+    }
+
+    @NonNull
+    public LiveData<Resource<IssueDataModel>> setIssueRecordById(int id) {
+        Log.e("STEFANO","record selected "+String.valueOf(id));
+        // stream of the actual data coming from the transformation
+        return mIssueRepository.getIssueRecordById(id);
+    }
+
+    @NonNull
+    public LiveData<Resource<IssueDataModel>> getRecordFromDb() {
+
+        // observable of the stream to be observed by the fragment
+        return mResultIssueItemDataModel;
+    }
 
 
-    
+
+
+
+
+
 
 
 
@@ -166,9 +210,13 @@ public class RepositoryViewModel extends ViewModel {
     }
 
 
+
     public LiveData<String> getSnackBar() {
         return mResultMessageSnackbar;
     }
 
 
+    public void getResultsFromDatabase() {
+        setQueryString(null,null,false);
+    }
 }

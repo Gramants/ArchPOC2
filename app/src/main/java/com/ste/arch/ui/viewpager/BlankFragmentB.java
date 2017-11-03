@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.ste.arch.databinding.FragmentDetailBinding;
 import com.ste.arch.entities.ContributorTransformed;
 import com.ste.arch.entities.IssueDataModel;
+import com.ste.arch.repositories.asyncoperations.Status;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
@@ -86,24 +87,46 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
             if (savedInstanceState.getParcelable("issue") != null) {
                 mFragmentDetailBinding.setIssue(savedInstanceState.getParcelable("issue"));
                 mClickedIssueModel = savedInstanceState.getParcelable("issue");
-                Log.e("STEFANO", "val " + ((IssueDataModel) savedInstanceState.getParcelable("issue")).getTitle());
-
             }
             //mFragmentDetailBinding.executePendingBindings();
             Log.e("STEFANO", "recupero da savedinstance state e faccio vedere ");
         }
 
-        Log.e("STEFANO", "onactivitycreated listening to observable");
-        businessViewModel.getIssue().observe(this, resource -> {
+
+
+
+        repositoryViewModel.getRecordFromDb().observe(this, resource -> {
             {
+
+                if (resource.status== Status.ERROR)
+                {
+                    Log.e("STEFANO", "Status.ERROR");
+                }
+                else if (resource.status.equals(Status.SUCCESS) )
+                {
+                    Log.e("STEFANO", "Status.SUCCESS");
+                }
+                else if (resource.status.equals(Status.LOADING) )
+                {
+                    Log.e("STEFANO", "Status.LOADING");
+                }
+                else if (resource.status.equals(Status.SUCCESSFROMDB) )
+                {
+                    Log.e("STEFANO", "Status.SUCCESSFROMDB");
+                }
+
+
+
                 if (resource != null) {
-                    Log.e("STEFANO", "issue da cache " + resource.getTitle());
-                    mFragmentDetailBinding.setIssue(resource);
-                    this.mClickedIssueModel = resource;
+                    Log.e("STEFANO", "issue da db " + resource.data.getTitle());
+                    mFragmentDetailBinding.setIssue(resource.data);
+                    this.mClickedIssueModel = resource.data;
                     //mFragmentDetailBinding.executePendingBindings();
                 }
             }
         });
+
+        Log.e("STEFANO", "onactivitycreated listening to observable");
 
 
         businessViewModel.getContributorContent().observe(this, resource -> {
@@ -119,10 +142,8 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         businessViewModel.getIssueContent().observe(this, resource -> {
             {
                 if (resource != null) {
-                    // on delete record is firing, WHy?
                     Log.e("STEFANO", "issue da db " + resource.getTitle());
                     this.mClickedIssueModel = resource;
-
                     mFragmentDetailBinding.setIssue(resource);
                     // mFragmentDetailBinding.executePendingBindings();
                 }
@@ -137,26 +158,10 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("STEFANO", "oncreateview cleaning all");
-
         return mFragmentDetailBinding.getRoot();
-/*
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_detail, container, false);
-        textView = view.findViewById(R.id.fragment_textB);
-        //set the on click listener
-        Button button = view.findViewById(R.id.btnB);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                pagerAgentViewModel.sendMessageToA("Got Hello from B!");
-                pagerAgentViewModel.sendMessageToC("Got Hello from B!");
-            }
-        });
-        return view;
-        */
     }
+
+
 
     @Override
     public void fragmentBecameVisible() {

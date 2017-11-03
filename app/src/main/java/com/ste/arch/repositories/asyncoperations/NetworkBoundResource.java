@@ -31,7 +31,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
             if (shouldFetch(data)) {
                 fetchFromNetwork(dbSource);
             } else {
-                result.addSource(dbSource, newData -> result.setValue(Resource.success(newData)));
+                result.addSource(dbSource, newData -> result.setValue(Resource.successfromdb(newData)));
             }
         });
     }
@@ -96,9 +96,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     protected abstract void saveCallResult(@NonNull RequestType item);
 
     @MainThread
-    protected boolean shouldFetch(@Nullable ResultType data) {
-        return true;
-    }
+    protected abstract Boolean shouldFetch(@Nullable ResultType data);
 
     @NonNull
     @MainThread

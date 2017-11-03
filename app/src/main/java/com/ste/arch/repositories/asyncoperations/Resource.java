@@ -21,6 +21,10 @@ public class Resource<T> {
         return new Resource<>(Status.SUCCESS, data, null);
     }
 
+    public static <T> Resource<T> successfromdb(@NonNull T data) {
+        return new Resource<>(Status.SUCCESSFROMDB, data, null);
+    }
+
     public static <T> Resource<T> error(String msg, @Nullable T data) {
         return new Resource<>(Status.ERROR, data, msg);
     }

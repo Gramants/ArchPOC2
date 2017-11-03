@@ -77,38 +77,39 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
         super.onResume();
         // as it is the first fragment of the pager, the first time the fragmentBecameVisible() is not called
         // but onresume yes
-        Log.e("STEFANO","onresume load  from Room");
-        repositoryViewModel.setQueryString(null,null,false);
-
+        repositoryViewModel.getResultsFromDatabase();
     }
   @Override
   public void onViewCreated(View view,Bundle save) {
     super.onViewCreated(view,save);
 
 
-
       Observer<String> observer = msg -> textView.setText(msg);
       pagerAgentViewModel.getMessageContainerA().observe(this, observer);
 
 
-      repositoryViewModel.getApiIssueResponseNew().observe(this,
+      repositoryViewModel.getApiIssueResponse().observe(this,
               apiResponse -> {
 
                 if (apiResponse.status==Status.ERROR)
                 {
-                    textView3.setText(apiResponse.message);
+                    textView3.setText("Error in last query, reason: "+apiResponse.message);
+                    mProgress.setVisibility(View.INVISIBLE);
                 }
                 else if (apiResponse.status.equals(Status.SUCCESS) )
                 {
-                      textView3.setText("Network call succesfull for Issues");
+                      textView3.setText("Network call successful for Issues endpoint");
+                      mProgress.setVisibility(View.INVISIBLE);
                 }
                 else if (apiResponse.status.equals(Status.LOADING) )
                 {
+                    mProgress.setVisibility(View.VISIBLE);
                     textView3.setText("Loading Issues from network");
                 }
-                else
+                else if (apiResponse.status.equals(Status.SUCCESSFROMDB) )
                 {
                     textView3.setText("Issue loaded from Room");
+                    mProgress.setVisibility(View.INVISIBLE);
                 }
 
 
@@ -122,40 +123,22 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
 
                 }
 
-                  mProgress.setVisibility(View.INVISIBLE);
 
               }
       );
 
 
-
-
   }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
 
 
 
-
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        utilityViewModel.getShowDialogIssueAndContributor().observe(this, showDialog -> {
-            mProgress.setVisibility(showDialog ? View.VISIBLE : View.INVISIBLE);
-        });
-    }
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
 
     // Inflate the layout for this fragment
-    View view = inflater.inflate(R.layout.fragment_blank_a, container, false);
+      View view = inflater.inflate(R.layout.fragment_blank_a, container, false);
 
       textView = view.findViewById(R.id.fragment_textA);
       textView2 = view.findViewById(R.id.fragment_textA2);
@@ -163,8 +146,12 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
 
       mProgress = (ProgressBar) view.findViewById(R.id.marker_progress);
       mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
       // set the onclick listener
       Button button = view.findViewById(R.id.btnA);
+
+
+
 
       mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
       mRecyclerView.setLayoutManager(new LinearLayoutManager(
@@ -185,16 +172,14 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
                   @Override
                   public void onItemClick(View view, int position) {
                     businessViewModel.setValueIssueContent((IssueDataModel) cache.get(position));
-                    utilityViewModel.setSnackBar("Issue Detail in Fragment B passing a cached object");
+                    utilityViewModel.setSnackBar("Item passed to Fragment B using a cached List object (not DB)");
                   }
 
                   @Override
                   public void onLongItemClick(View view, int position) {
 
-                      //mBusinessViewModel.loadIssue(0,(IssueDataModel) cache.get(position));
-
-                      //mBusinessViewModel.loadIssue(((IssueDataModel) cache.get(position)).getId());
-                      //mUtilityViewModel.setSnackBar("Record from db opened in Detail on LongClick");
+                      repositoryViewModel.setRecordIdToStream(((IssueDataModel) cache.get(position)).getId());
+                      utilityViewModel.setSnackBar("Item passed to Fragment B selecting the DB record");
 
                   }
               })
@@ -208,17 +193,12 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
 
           @Override
           public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-              final int position = viewHolder.getAdapterPosition(); //swiped position
-
-              //FUNZIONA!!
-              //repositoryViewModel.deleteRecordByIdNew(((IssueDataModel) cache.get(position)).getId());
+              final int position = viewHolder.getAdapterPosition();
               repositoryViewModel.deleteIssueRecordById(((IssueDataModel) cache.get(position)).getId());
-
-              //mUtilityViewModel.setSnackBar("Record deleted and Room livedata list refreshed");
-
-
+              utilityViewModel.setSnackBar("Record deleted and Room livedata list refreshed");
           }
       };
+
       ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
       itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
@@ -227,30 +207,19 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
       @Override
       public void onClick(View v)
       {
-        //pagerAgentViewModel.sendMessageToA("Hello A from A");
         pagerAgentViewModel.sendMessageToB("Got Hello from A!");
         pagerAgentViewModel.sendMessageToC("Got Hello from A!");
       }
     });
+
     return view;
   }
 
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            mIsVisible=true;
-        }
-        else {
-            mIsVisible=false;
-        }
-    }
 
     @Override
     public void fragmentBecameVisible() {
-      Log.e("STEFANO","fragmentBecameVisible load  from Room");
-        repositoryViewModel.setQueryString(null,null,false);
+        repositoryViewModel.getResultsFromDatabase();
     }
 }
 
