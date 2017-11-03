@@ -21,6 +21,7 @@ import com.ste.arch.R;
 import com.ste.arch.adapters.IssueDataAdapter;
 import com.ste.arch.adapters.RecyclerItemClickListener;
 import com.ste.arch.entities.IssueDataModel;
+import com.ste.arch.repositories.asyncoperations.Status;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
@@ -92,28 +93,42 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
 
       repositoryViewModel.getApiIssueResponseNew().observe(this,
               apiResponse -> {
+
+                if (apiResponse.status==Status.ERROR)
+                {
+                    textView3.setText(apiResponse.message);
+                }
+                else if (apiResponse.status.equals(Status.SUCCESS) )
+                {
+                      textView3.setText("Network call succesfull for Issues");
+                }
+                else if (apiResponse.status.equals(Status.LOADING) )
+                {
+                    textView3.setText("Loading Issues from network");
+                }
+                else
+                {
+                    textView3.setText("Issue loaded from Room");
+                }
+
+
+
                 if (apiResponse.data!=null)
                 {
-                  if (apiResponse.data.size()>0)
-                  {
                       cache=apiResponse.data;
                       textView2.setText("Issues found:"+String.valueOf(apiResponse.data.size()) );
-                      textView3.setText("No error");
-                      mProgress.setVisibility(View.INVISIBLE);
-
                       mAdapter.clearIssues();
                       mAdapter.addIssues(apiResponse.data);
-                  }
+
                 }
+
+                  mProgress.setVisibility(View.INVISIBLE);
+
               }
       );
 
 
 
-          repositoryViewModel.getIssueNetworkErrorResponse().observe(this, networkError -> {
-          textView3.setText("No issues found from Network call");
-          mProgress.setVisibility(View.INVISIBLE);
-      });
 
   }
 
@@ -195,7 +210,10 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
           public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
               final int position = viewHolder.getAdapterPosition(); //swiped position
 
+              //FUNZIONA!!
+              //repositoryViewModel.deleteRecordByIdNew(((IssueDataModel) cache.get(position)).getId());
               repositoryViewModel.deleteIssueRecordById(((IssueDataModel) cache.get(position)).getId());
+
               //mUtilityViewModel.setSnackBar("Record deleted and Room livedata list refreshed");
 
 

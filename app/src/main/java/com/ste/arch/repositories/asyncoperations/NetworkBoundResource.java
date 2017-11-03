@@ -1,5 +1,5 @@
 
-package com.ste.arch.repositories;
+package com.ste.arch.repositories.asyncoperations;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -10,20 +10,24 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.ste.arch.Config;
+import com.ste.arch.entities.NetworkErrorObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.ste.arch.entities.translator.DataTranslator.ContributorTranslator;
 
 public abstract class NetworkBoundResource<ResultType, RequestType> {
     private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
 
     @MainThread
-    NetworkBoundResource() {
+    public NetworkBoundResource() {
         result.setValue(Resource.loading(null));
         LiveData<ResultType> dbSource = loadFromDb();
         result.addSource(dbSource, data -> {
             result.removeSource(dbSource);
-            Log.e("STEFANO","result.removeSource(dbSource)");
             if (shouldFetch(data)) {
                 fetchFromNetwork(dbSource);
             } else {
@@ -39,8 +43,19 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
             @Override
             public void onResponse(Call<RequestType> call, Response<RequestType> response) {
                 result.removeSource(dbSource);
-                Log.e("STEFANO","result.removeSource");
-                saveResultAndReInit(response.body());
+                if (response.isSuccessful()) {
+                    Log.e("STEFANO","result.removeSource");
+                    saveResultAndReInit(response.body());
+                }
+                else
+                {
+                    Log.e("STEFANO","onFailure "+response.message());
+                    onFetchFailed();
+                    result.removeSource(dbSource);
+                    result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message(), newData)));
+
+                }
+
             }
 
             @Override
@@ -61,7 +76,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
             @Override
             protected Void doInBackground(Void... voids) {
-
+                deleteAll(response);
                 saveCallResult(response);
                 return null;
             }
@@ -72,6 +87,10 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
             }
         }.execute();
     }
+
+
+    @WorkerThread
+    protected abstract void deleteAll(RequestType response);
 
     @WorkerThread
     protected abstract void saveCallResult(@NonNull RequestType item);

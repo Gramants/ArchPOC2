@@ -14,7 +14,7 @@ import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
 import com.ste.arch.repositories.IssueRepository;
-import com.ste.arch.repositories.Resource;
+import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
 import java.util.List;
@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 
 public class RepositoryViewModel extends ViewModel {
-
 
 
     private MediatorLiveData<List<IssueDataModel>> mApiIssueResponse;
@@ -44,79 +43,81 @@ public class RepositoryViewModel extends ViewModel {
 
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueDataModelNew;
 
-    public void init()
-    {
+    public void init() {
 
+        // invoked only by the factory of the container Activity
 
         mApiIssueResponse = new MediatorLiveData<>();
         mApiContributorResponse = new MediatorLiveData<>();
         mQueryStringObject = new MutableLiveData<>();
         mMessageSnackbar = new MutableLiveData<>();
 
-        mResultIssueDataModelNew = Transformations.switchMap(mQueryStringObject, mQueryStringObject->{
-            Log.e("STEFANO","scatta");
-            return loadIssues(mQueryStringObject.getUser(),mQueryStringObject.getRepo(),mQueryStringObject.getForceremote());
+        //Load async issues   //STEP2-a
+        mResultIssueDataModelNew = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
 
-        mResultContributorDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject->{
-            Log.e("STEFANO","scatta2");
-            return loadContributor(mQueryStringObject.getUser(),mQueryStringObject.getRepo(),mQueryStringObject.getForceremote());
+        //Load async contributors  //STEP2-b
+        mResultContributorDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return loadContributor(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
 
-        mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject,  mQueryStringObject->{
-            Log.e("STEFANO","scatta3");
-            return mQueryStringObject.getForceremote()==false?null:loadSnackBar("Search string: "+mQueryStringObject.getUser()+"/"+mQueryStringObject.getRepo());
+        //send msg to snackbar   //STEP2-c
+        mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
         });
-
 
 
     }
-
-    public LiveData<String> loadSnackBar(String temp) {
-         mMessageSnackbar.setValue(temp);
-         return mMessageSnackbar;
-    }
-
-
-    public LiveData<String> getSnackBar() {
-        return mResultMessageSnackbar;
-    }
-
 
 
     @Inject
-    public RepositoryViewModel(IssueRepository mIssueRepository,ContributorRepository mContributorRepository,PersistentStorageProxy mPersistentStorageProxy) {
-
-        this.mIssueRepository=mIssueRepository;
-        this.mContributorRepository= mContributorRepository;
-        this.mPersistentStorageProxy=mPersistentStorageProxy;
-
-
-
+    public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
+        this.mIssueRepository = mIssueRepository;
+        this.mContributorRepository = mContributorRepository;
+        this.mPersistentStorageProxy = mPersistentStorageProxy;
     }
 
 
-    // given the initial query string
+    //STEP1
+    // the initial query string fires 3 transformed stream Load async issues,Load async contributors and send msg to snackbar
     public void setQueryString(String user, String repo, boolean forceremote) {
-        Log.e("STEFANO","dentro repository view model");
-        mQueryStringObject.setValue(new QueryString(user,repo,forceremote));
+        mQueryStringObject.setValue(new QueryString(user, repo, forceremote));
     }
 
 
-    // saving the good query string to sharedpref
-    public void saveSearchString(String searchstring) {
-        mPersistentStorageProxy.setSearchStringTemp(searchstring);
-    }
-
-
-
-// set the stream  from db at the startup or fron network the issues
+// -----------  LOAD ISSUES
+//Load async issues read the issues stream from db or from network passing vars from the object wrapping the search string
+//STEP3
 
     public LiveData<Resource<List<IssueDataModel>>> loadIssues(String user, String repo, Boolean forceremote) {
-
-        return mIssueRepository.getIssues(user,repo,forceremote);
-
+        return mIssueRepository.getIssues(user, repo, forceremote);
     }
+
+
+// async issues observable, observed by UI
+//STEP4
+
+    @NonNull
+    public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponseNew() {
+        return mResultIssueDataModelNew;
+    }
+
+
+// -----------  DELETE ISSUE RECORD
+// invoked  by UI
+
+    public void deleteIssueRecordById(Integer id) {
+        mIssueRepository.deleteIssueById(id);
+    }
+
+
+
+
+
+    
+
+
 
 
 // set the stream from db at the startup or fron network the contributors
@@ -130,26 +131,14 @@ public class RepositoryViewModel extends ViewModel {
     }
 
 
-// get the stream  from the observables of issues and contributors wrapped in mutablelivedata
+    // get the stream  from the observables of issues and contributors wrapped in mutablelivedata
     @NonNull
     public LiveData<List<ContributorDataModel>> getApiContributorResponse() {
         return mResultContributorDataModel;
     }
 
-    @NonNull
-    public LiveData<List<IssueDataModel>> getApiIssueResponse() {
-        return mResultIssueDataModel;
-    }
-    @NonNull
-    public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponseNew() {
-        return mResultIssueDataModelNew;
-    }
 
-  // delete a record from the db by pk
-
-    public void deleteIssueRecordById(Integer id) {
-        mIssueRepository.deleteIssueRecordById(id);
-    }
+    // delete a record from the db by pk
 
 
     // catch the error network object from the network call of issues and contributors
@@ -159,6 +148,26 @@ public class RepositoryViewModel extends ViewModel {
 
     public LiveData<NetworkErrorObject> getContributorNetworkErrorResponse() {
         return mContributorRepository.getNetworkError();
+    }
+
+
+    // saving the good query string to sharedpref
+    public void saveSearchString(String searchstring) {
+        mPersistentStorageProxy.setSearchStringTemp(searchstring);
+    }
+
+
+    // Snackbar management
+
+
+    public LiveData<String> loadSnackBar(String temp) {
+        mMessageSnackbar.setValue(temp);
+        return mMessageSnackbar;
+    }
+
+
+    public LiveData<String> getSnackBar() {
+        return mResultMessageSnackbar;
     }
 
 

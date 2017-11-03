@@ -1,67 +1,54 @@
 package com.ste.arch.repositories;
 
-import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.ste.arch.Config;
-import com.ste.arch.Utils;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.entities.IssueResponse;
 import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
+import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.database.IssueDao;
-import com.ste.arch.repositories.database.ProjectDb;
-import com.ste.arch.repositories.database.asyncdml.IssueDbManager;
+import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
+import com.ste.arch.repositories.asyncoperations.DeleteRecord;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.ste.arch.entities.translator.DataTranslator.IssueTranslator;
 
 
 public class IssueRepositoryImpl implements IssueRepository {
 
     private IssueDao issueDao;
     private GithubApiService mApiService;
-    private ProjectDb mProjectDb;
     private MutableLiveData<NetworkErrorObject> liveDataError = new MutableLiveData<>();
 
     @Inject
-    public IssueRepositoryImpl(IssueDao issueDao, ProjectDb mProjectDb, GithubApiService mApiService) {
+    public IssueRepositoryImpl(IssueDao issueDao, GithubApiService mApiService) {
         this.issueDao = issueDao;
         this.mApiService = mApiService;
-        this.mProjectDb = mProjectDb;
     }
 
 
-
-
     public LiveData<Resource<List<IssueDataModel>>> getIssues(String owner, String repo, Boolean forceRemote)  {
-        Log.e("STEFANO","call network "+owner+" "+repo);
         return new NetworkBoundResource<List<IssueDataModel>, List<Issue>>() {
-
-
             @Override
-            protected void saveCallResult(@NonNull List<Issue> item) {
-                Log.e("STEFANO","save call "+String.valueOf(item.size()));
+            protected void deleteAll(List<Issue> item) {
+                if (item!=null) {
                 issueDao.deleteAll();
-                issueDao.insert(DataTranslator.IssueTranslator(item));
+                }
             }
 
+            @Override
+            protected void saveCallResult(List<Issue> item) {
+                if (item!=null)
+                {issueDao.insert(DataTranslator.IssueTranslator(item));}
+            }
             @NonNull
             @Override
             protected LiveData<List<IssueDataModel>> loadFromDb() {
@@ -75,6 +62,25 @@ public class IssueRepositoryImpl implements IssueRepository {
             }
         }.getAsLiveData();
     }
+
+
+
+    public void deleteIssueById(Integer id) {
+        new DeleteRecord() {
+            @Override
+            protected void deleteRecordById() {
+                issueDao.deleteById(id);
+            }
+
+        };
+    }
+
+
+    @Override
+    public LiveData<IssueDataModel> getIssueFromDb(int id) {
+        return issueDao.getIssueById(id);
+    }
+
 
 
 /*
@@ -145,21 +151,34 @@ public class IssueRepositoryImpl implements IssueRepository {
     }
 
 
+
+
+
+
+
+    /*
     @Override
-    public LiveData<IssueDataModel> getIssueFromDb(int id) {
-        return issueDao.getIssueById(id);
+    public LiveData<Resource<List<IssueDataModel>>> deleteIssueRecordByIdNew(Integer id) {
+
+        Log.e("STEFANO","delete recrod by id "+String.valueOf(id));
+
+        return new DeleteRecordBoundResource<List<IssueDataModel>>() {
+
+            @Override
+            protected void deleteRecordById() {
+                Log.e("STEFANO","deleteRecordById() INSIDE");
+                issueDao.deleteById(id);
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<List<IssueDataModel>> loadFromDb() {
+                return null;
+            }
+        }.getAsLiveData();
 
     }
-
-    @Override
-    public void deleteIssueRecordById(int id) {
-        new IssueDbManager.DeleteIssueByIdAsyncTask(mProjectDb).execute(id);
-    }
-
-
-    private void deleteTableAndSaveDataToLocal(ArrayList<IssueDataModel> issues) {
-        new IssueDbManager.AddIssueAsyncTask(mProjectDb).execute(issues);
-    }
+   */
 
 
 }

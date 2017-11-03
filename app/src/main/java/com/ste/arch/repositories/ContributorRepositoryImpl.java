@@ -13,7 +13,7 @@ import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.database.ContributorDao;
 import com.ste.arch.repositories.database.ProjectDb;
-import com.ste.arch.repositories.database.asyncdml.ContributorDbManager;
+import com.ste.arch.repositories.asyncoperations.ContributorDbManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
