@@ -2,6 +2,7 @@ package com.ste.arch.ui.viewpager;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 
 import com.ste.arch.R;
+import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
@@ -46,7 +49,9 @@ public class PagerActivity extends DaggerAppCompatActivity {
     private SearchView mSearchView;
     private Toolbar mToolbar;
     private String mSearchString;
-    private CharSequence titles[]= {"Fragment A","Fragment B", "Dummy", "Dummy", "Dummy", "Fragment C"};
+    private CharSequence titles[]= {"Fragment A","Dummy", "Dummy", "Dummy", "Dummy","Fragment B", "Dummy","Dummy", "Dummy", "Dummy","Fragment C"};
+    private FloatingActionButton mAddRecord;
+    private FloatingActionButton mUpdateRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,16 @@ public class PagerActivity extends DaggerAppCompatActivity {
         mTablayout = findViewById(R.id.tablayout);
         mPager = findViewById(R.id.pager);
         mToolbar = findViewById(R.id.toolbar);
+        mAddRecord = findViewById(R.id.fab1);
+        mUpdateRecord= findViewById(R.id.fab2);
+
         mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+
+
+
+
+
+
         setSupportActionBar(mToolbar);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -97,6 +111,29 @@ public class PagerActivity extends DaggerAppCompatActivity {
             public void onPageScrollStateChanged(final int position) {
             }
         });
+
+
+
+        mAddRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                repositoryViewModel.addIssueRecord(new IssueDataModel("url","url",0,"AAA INSERTED","A","2017-11-03T05:29:08Z","INSERTED","STE","url"));
+
+            }
+        });
+
+
+        mUpdateRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                repositoryViewModel.updateIssueTitleRecord("AAA INSERTED","BBB UPDATED!");
+
+            }
+        });
+
+
+
+
 
 
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -145,13 +182,19 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public static final int FRAGMENT_A_POS = 0;
-        public static final int FRAGMENT_B_POS = 1;
-        public static final int FRAGMENT_C_POS = 2;
-        public static final int FRAGMENT_D_POS = 3;
-        public static final int FRAGMENT_E_POS = 4;
-        public static final int FRAGMENT_F_POS = 5;
-        public static final int FRAGMENT_COUNT = 6;
+        public static final int FRAGMENT_0_POS = 0;
+        public static final int FRAGMENT_1_POS = 1;
+        public static final int FRAGMENT_2_POS = 2;
+        public static final int FRAGMENT_3_POS = 3;
+        public static final int FRAGMENT_4_POS = 4;
+        public static final int FRAGMENT_5_POS = 5;
+        public static final int FRAGMENT_6_POS = 6;
+        public static final int FRAGMENT_7_POS = 7;
+        public static final int FRAGMENT_8_POS = 8;
+        public static final int FRAGMENT_9_POS = 9;
+        public static final int FRAGMENT_10_POS = 10;
+
+        public static final int FRAGMENT_COUNT = 11;
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -160,18 +203,28 @@ public class PagerActivity extends DaggerAppCompatActivity {
         public Fragment getItem(int position) {
             switch (position)
             {
-                case FRAGMENT_A_POS :
-                    return BlankFragmentA.newInstance();
-                case FRAGMENT_B_POS:
-                    return BlankFragmentB.newInstance();
-                case FRAGMENT_C_POS:
+                case FRAGMENT_0_POS :
+                    return BlankFragmentA.newInstance();  // A
+                case FRAGMENT_1_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_D_POS:
+                case FRAGMENT_2_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_E_POS:
+                case FRAGMENT_3_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_F_POS :
-                    return BlankFragmentC.newInstance();
+                case FRAGMENT_4_POS:
+                    return BlankFragment.newInstance();
+                case FRAGMENT_5_POS :
+                    return BlankFragmentB.newInstance(); // B
+                case FRAGMENT_6_POS :
+                    return BlankFragment.newInstance();
+                case FRAGMENT_7_POS :
+                    return BlankFragment.newInstance();
+                case FRAGMENT_8_POS :
+                    return BlankFragment.newInstance();
+                case FRAGMENT_9_POS :
+                    return BlankFragment.newInstance();
+                case FRAGMENT_10_POS :
+                    return BlankFragmentC.newInstance();  // C
                 default:
                     break;
             }

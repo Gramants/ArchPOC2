@@ -98,29 +98,17 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         repositoryViewModel.getRecordFromDb().observe(this, resource -> {
             {
 
-                if (resource.status== Status.ERROR)
-                {
-                    Log.e("STEFANO", "Status.ERROR");
-                }
-                else if (resource.status.equals(Status.SUCCESS) )
-                {
-                    Log.e("STEFANO", "Status.SUCCESS");
-                }
-                else if (resource.status.equals(Status.LOADING) )
-                {
-                    Log.e("STEFANO", "Status.LOADING");
-                }
-                else if (resource.status.equals(Status.SUCCESSFROMDB) )
-                {
-                    Log.e("STEFANO", "Status.SUCCESSFROMDB");
-                }
-
-
-
                 if (resource != null) {
-                    Log.e("STEFANO", "issue da db " + resource.data.getTitle());
-                    mFragmentDetailBinding.setIssue(resource.data);
-                    this.mClickedIssueModel = resource.data;
+
+                    if (resource.status.equals(Status.SUCCESSFROMDB)) {
+                        Log.e("STEFANO", "Status.SUCCESSFROMDB");
+                    }
+
+                    if (resource.data != null) {
+                        Log.e("STEFANO", "issue da db " + resource.data.getTitle());
+                        mFragmentDetailBinding.setIssue(resource.data);
+                        this.mClickedIssueModel = resource.data;
+                    }
                     //mFragmentDetailBinding.executePendingBindings();
                 }
             }
@@ -142,10 +130,11 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         businessViewModel.getIssueContent().observe(this, resource -> {
             {
                 if (resource != null) {
+                    // here I have straight the object not wrapped in any Resource
                     Log.e("STEFANO", "issue da db " + resource.getTitle());
                     this.mClickedIssueModel = resource;
                     mFragmentDetailBinding.setIssue(resource);
-                    // mFragmentDetailBinding.executePendingBindings();
+
                 }
             }
         });
@@ -160,7 +149,6 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         Log.e("STEFANO", "oncreateview cleaning all");
         return mFragmentDetailBinding.getRoot();
     }
-
 
 
     @Override

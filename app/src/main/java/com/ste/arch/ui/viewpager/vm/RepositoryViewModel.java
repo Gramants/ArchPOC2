@@ -25,7 +25,6 @@ import javax.inject.Inject;
 public class RepositoryViewModel extends ViewModel {
 
 
-    private MediatorLiveData<List<IssueDataModel>> mApiIssueResponse;
     private MediatorLiveData<List<ContributorDataModel>> mApiContributorResponse;
 
     private MutableLiveData<QueryString> mQueryStringObject;
@@ -33,7 +32,6 @@ public class RepositoryViewModel extends ViewModel {
     private MutableLiveData<Integer> mSelectedId;
 
     private LiveData<String> mResultMessageSnackbar;
-   
     private LiveData<List<ContributorDataModel>> mResultContributorDataModel;
 
 
@@ -46,14 +44,37 @@ public class RepositoryViewModel extends ViewModel {
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
 
 
+
+
+    @Inject
+    public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
+        this.mIssueRepository = mIssueRepository;
+        this.mContributorRepository = mContributorRepository;
+        this.mPersistentStorageProxy = mPersistentStorageProxy;
+    }
+
+
+
+
     public void init() {
 
         // invoked only by the factory of the container Activity
 
-        mApiIssueResponse = new MediatorLiveData<>();
+
         mApiContributorResponse = new MediatorLiveData<>();
+
+
+
+
+        // UI events
         mQueryStringObject = new MutableLiveData<>();
+
         mMessageSnackbar = new MutableLiveData<>();
+
+        mSelectedId = new MutableLiveData<>();
+
+
+
 
 
         // init issue List and Item observable
@@ -61,7 +82,12 @@ public class RepositoryViewModel extends ViewModel {
 
         // init issue Item  and Id item
         mResultIssueItemDataModel=new MutableLiveData<>();
-        mSelectedId = new MutableLiveData<>();
+
+
+
+
+
+
 
         //Load async issues   //STEP2-a
         mResultIssueListDataModel= Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
@@ -83,15 +109,11 @@ public class RepositoryViewModel extends ViewModel {
             return  setIssueRecordById(mSelectedId.intValue());
         });
 
+
+
     }
 
 
-    @Inject
-    public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
-        this.mIssueRepository = mIssueRepository;
-        this.mContributorRepository = mContributorRepository;
-        this.mPersistentStorageProxy = mPersistentStorageProxy;
-    }
 
 
     //STEP1
@@ -128,10 +150,8 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-// -----------  SELECT THe ID
+// -----------  SELECT and stream the Issue record by ID
 
-    //STEP1
-    // the initial query string fires 3 transformed stream Load async issues,Load async contributors and send msg to snackbar
 
     @NonNull
     public LiveData<Integer> setRecordIdToStream(Integer id) {
@@ -142,20 +162,29 @@ public class RepositoryViewModel extends ViewModel {
 
     @NonNull
     public LiveData<Resource<IssueDataModel>> setIssueRecordById(int id) {
-        Log.e("STEFANO","record selected "+String.valueOf(id));
-        // stream of the actual data coming from the transformation
+        // stream of the actual data coming from the transformation fired by the item click on the UI
         return mIssueRepository.getIssueRecordById(id);
     }
 
     @NonNull
     public LiveData<Resource<IssueDataModel>> getRecordFromDb() {
-
         // observable of the stream to be observed by the fragment
         return mResultIssueItemDataModel;
     }
 
 
 
+
+
+    public void addIssueRecord(IssueDataModel issueDataModel) {
+        mIssueRepository.addIssueRecord(issueDataModel);
+    }
+
+
+    public void updateIssueTitleRecord(String titleold, String titlenew) {
+        mIssueRepository.updateIssueTitleRecord(titleold,titlenew);
+
+    }
 
 
 
@@ -219,4 +248,7 @@ public class RepositoryViewModel extends ViewModel {
     public void getResultsFromDatabase() {
         setQueryString(null,null,false);
     }
+
+
+
 }

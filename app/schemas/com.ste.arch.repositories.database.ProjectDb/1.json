@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "004069638b8f08c3ee2cbedd13db9cad",
+    "identityHash": "78810f0c9695871d180db140e7079eb0",
     "entities": [
       {
         "tableName": "Issues",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `number` INTEGER, `url` TEXT, `repositoryurl` TEXT, `title` TEXT, `username` TEXT, `userurl` TEXT, `state` TEXT, `createdat` TEXT, `body` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `number` INTEGER, `url` TEXT, `repositoryurl` TEXT, `title` TEXT, `username` TEXT, `userurl` TEXT, `state` TEXT, `createdat` TEXT, `body` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -73,7 +73,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
@@ -113,7 +113,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"004069638b8f08c3ee2cbedd13db9cad\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"78810f0c9695871d180db140e7079eb0\")"
     ]
   }
 }

@@ -2,6 +2,7 @@ package com.ste.arch.repositories;
 
 import android.arch.lifecycle.LiveData;
 
+import com.ste.arch.SingleLiveEvent;
 import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.repositories.asyncoperations.Resource;
@@ -18,13 +19,15 @@ public interface IssueRepository {
 
     void deleteIssueById(Integer id);
 
+    void addIssueRecord(IssueDataModel issueDataModel);
+
+    void updateIssueTitleRecord(String titleold, String titlenew);
+
 
 
 
     // used only by contributors now but to delete
     LiveData<NetworkErrorObject> getNetworkError();
-
-
 
 
 

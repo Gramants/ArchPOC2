@@ -3,6 +3,7 @@ package com.ste.arch.repositories.asyncoperations;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Observer;
 import android.os.AsyncTask;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -15,13 +16,47 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public abstract class SelectRecord<ResultType> {
-    private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<ResultType>> distinctLiveData = new MediatorLiveData<>();
 
     @MainThread
     public SelectRecord() {
-        
+
         LiveData<ResultType> dbSource = selectRecordById();
-        result.addSource(dbSource, newData -> result.setValue(Resource.successfromdb(newData)));
+
+        distinctLiveData.addSource(dbSource, new Observer<ResultType>() {
+            private Boolean initialized = false;
+            private ResultType lastObj = null;
+            @Override
+            public void onChanged(@Nullable ResultType obj) {
+
+                if (!initialized) {
+                    initialized = true;
+                    lastObj = obj;
+                    Log.e("STEFANO", "!initialized");
+                    distinctLiveData.postValue(Resource.successfromdb(lastObj));
+                }
+                else
+                {
+                    Log.e("STEFANO", "already initialized");
+                    distinctLiveData.postValue(null);
+                }
+                /*  adding this conditions there will be the problem of multiple subscriptions!!!!!
+                else if ((obj == null && lastObj != null) || obj != lastObj) {
+
+                    if (obj == null && lastObj != null)
+                        Log.e("STEFANO", "obj == null && lastObj != null");
+                    else
+                        Log.e("STEFANO", "obj != lastObj");
+
+                    Log.e("STEFANO", "already initialized will not post the value");
+                    lastObj = obj;
+                    distinctLiveData.postValue(Resource.successfromdb(lastObj));
+                }
+                */
+
+
+            }
+        });
 
     }
 
@@ -32,6 +67,9 @@ public abstract class SelectRecord<ResultType> {
 
 
     public final LiveData<Resource<ResultType>> getAsLiveData() {
-        return result;
+        return distinctLiveData;
     }
+
+
 }
+

@@ -13,7 +13,7 @@ import com.ste.arch.Config;
 @Entity(tableName = Config.ISSUES_TABLE_NAME)
 public class IssueDataModel implements Parcelable {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private Integer id;
     @ColumnInfo(name = "number")
@@ -36,8 +36,7 @@ public class IssueDataModel implements Parcelable {
     private String body;
 
 
-    public IssueDataModel(Integer id, String url, String repositoryUrl, Integer number, String title, String state, String createdAt, String body, String username, String userurl) {
-        this.id = id;
+    public IssueDataModel(String url, String repositoryUrl, Integer number, String title, String state, String createdAt, String body, String username, String userurl) {
         this.url = url;
         this.repositoryUrl = repositoryUrl;
         this.number = number;

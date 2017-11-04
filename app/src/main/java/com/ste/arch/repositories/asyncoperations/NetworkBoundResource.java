@@ -76,8 +76,8 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                deleteAll(response);
-                saveCallResult(response);
+
+                updateAll(response);
                 return null;
             }
 
@@ -88,6 +88,8 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
         }.execute();
     }
 
+    @WorkerThread
+    protected abstract void updateAll(RequestType response);
 
     @WorkerThread
     protected abstract void deleteAll(RequestType response);

@@ -14,19 +14,18 @@ import javax.inject.Inject;
  */
 
 public class BusinessViewModelFactory extends ViewModelProvider.NewInstanceFactory{
-    private IssueRepository mIssueRepository;
-    private ContributorRepository mContributorRepository;
-    private PersistentStorageProxy mPersistentStorageProxy;
+    PersistentStorageProxy mPersistentStorageProxy;
+
 
     @Inject
-    public BusinessViewModelFactory(IssueRepository mIssueRepository,ContributorRepository mContributorRepository,PersistentStorageProxy mPersistentStorageProxy) {
-        this.mIssueRepository=mIssueRepository;
-        this.mContributorRepository= mContributorRepository;
+    public BusinessViewModelFactory(PersistentStorageProxy mPersistentStorageProxy) {
         this.mPersistentStorageProxy=mPersistentStorageProxy;
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        return (T) new BusinessViewModel(mIssueRepository, mContributorRepository,mPersistentStorageProxy);
+        return (T) new BusinessViewModel(mPersistentStorageProxy);
     }
 }
+
+

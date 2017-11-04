@@ -19,7 +19,7 @@ public class DataTranslator {
     public static ArrayList<IssueDataModel> IssueTranslator(List<Issue> response) {
         ArrayList<IssueDataModel> transformed = new ArrayList();
             for (Issue listitem : response) {
-                transformed.add(new IssueDataModel(listitem.getId(), listitem.getUrl(), listitem.getRepositoryUrl(), listitem.getNumber(), listitem.getTitle(), listitem.getState(), listitem.getCreatedAt(), listitem.getBody(), listitem.getUser().getLogin(), listitem.getUser().getUrl()));
+                transformed.add(new IssueDataModel(listitem.getUrl(), listitem.getRepositoryUrl(), listitem.getNumber(), listitem.getTitle(), listitem.getState(), listitem.getCreatedAt(), listitem.getBody(), listitem.getUser().getLogin(), listitem.getUser().getUrl()));
             }
         return transformed;
     }
