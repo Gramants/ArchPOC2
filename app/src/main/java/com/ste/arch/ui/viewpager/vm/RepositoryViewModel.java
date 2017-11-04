@@ -228,13 +228,13 @@ public class RepositoryViewModel extends ViewModel {
 
             @NonNull
             @Override
-            protected LiveData<Resource<IssueDataModel>> getUiData() {
-                return obj1;
+            protected LiveData<IssueDataModel> getUiData() {
+                return obj1.;
             }
 
             @NonNull
             @Override
-            protected LiveData<Resource<IssueDataModel>> getDbData() {
+            protected LiveData<IssueDataModel> getDbData() {
                 return obj2;
             }
         }.getAsLiveData();

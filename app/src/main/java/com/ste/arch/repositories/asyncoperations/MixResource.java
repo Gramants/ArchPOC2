@@ -14,19 +14,19 @@ public abstract class MixResource<ResultType> {
     @MainThread
     public MixResource() {
 
-        LiveData<Resource<IssueDataModel>> dbSource = getDbData();
-        LiveData<Resource<ResultType>> uiSource = getUiData();
+        LiveData<ResultType> dbSource = getDbData();
+        LiveData<ResultType> uiSource = getUiData();
 
         result.addSource(dbSource, data -> {
             result.removeSource(dbSource);
             if (dbSource!=null) {
-                result.addSource(dbSource, newData -> result.setValue(newData));
+                result.addSource(dbSource, newData -> result.setValue(Resource.successfromdb(newData)));
             }
         });
         result.addSource(uiSource, data -> {
             result.removeSource(uiSource);
             if (uiSource!=null) {
-                result.addSource(uiSource, newData -> result.setValue(newData));
+                result.addSource(uiSource, newData -> result.setValue(Resource.successfromdb(newData)));
             }
         });
 
@@ -35,11 +35,11 @@ public abstract class MixResource<ResultType> {
 
     @NonNull
     @MainThread
-    protected abstract LiveData<Resource<IssueDataModel>> getUiData();
+    protected abstract LiveData<ResultType> getUiData();
 
     @NonNull
     @MainThread
-    protected abstract LiveData<Resource<IssueDataModel>> getDbData();
+    protected abstract LiveData<ResultType> getDbData();
 
 
 
