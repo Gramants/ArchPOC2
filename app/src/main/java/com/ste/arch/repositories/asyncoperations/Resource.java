@@ -32,4 +32,8 @@ public class Resource<T> {
     public static <T> Resource<T> loading(@Nullable T data) {
         return new Resource<>(Status.LOADING, data, null);
     }
+
+    public static <T> Resource<T> successfromui(@NonNull T data) {
+        return new Resource<>(Status.SUCCESSFROMUI, data, null);
+    }
 }

@@ -171,7 +171,10 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
               new RecyclerItemClickListener(getActivity(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                   @Override
                   public void onItemClick(View view, int position) {
-                    businessViewModel.setValueIssueContent((IssueDataModel) cache.get(position));
+
+
+                    repositoryViewModel.setIssueByUi((IssueDataModel) cache.get(position));
+                    //businessViewModel.setValueIssueContent((IssueDataModel) cache.get(position));
                     utilityViewModel.setSnackBar("Item passed to Fragment B using a cached List object (not DB)");
                   }
 

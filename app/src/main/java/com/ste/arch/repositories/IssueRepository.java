@@ -17,6 +17,9 @@ public interface IssueRepository {
 
     LiveData<Resource<IssueDataModel>> getIssueRecordById(int id);
 
+    LiveData<Resource<IssueDataModel>> getWrappedIssueObject(LiveData<IssueDataModel> obj);
+
+
     void deleteIssueById(Integer id);
 
     void addIssueRecord(IssueDataModel issueDataModel);

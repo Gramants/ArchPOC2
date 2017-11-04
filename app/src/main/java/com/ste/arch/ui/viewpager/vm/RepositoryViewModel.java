@@ -27,9 +27,13 @@ public class RepositoryViewModel extends ViewModel {
 
     private MediatorLiveData<List<ContributorDataModel>> mApiContributorResponse;
 
+
+
     private MutableLiveData<QueryString> mQueryStringObject;
     private MutableLiveData<String> mMessageSnackbar;
     private MutableLiveData<Integer> mSelectedId;
+    private MutableLiveData<IssueDataModel> mSelectedIssue;
+
 
     private LiveData<String> mResultMessageSnackbar;
     private LiveData<List<ContributorDataModel>> mResultContributorDataModel;
@@ -42,7 +46,7 @@ public class RepositoryViewModel extends ViewModel {
 
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
-
+    private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
 
 
 
@@ -73,7 +77,7 @@ public class RepositoryViewModel extends ViewModel {
 
         mSelectedId = new MutableLiveData<>();
 
-
+        mSelectedIssue = new MutableLiveData<>();
 
 
 
@@ -106,9 +110,13 @@ public class RepositoryViewModel extends ViewModel {
 
         //select a record by id stream on click
         mResultIssueItemDataModel = Transformations.switchMap(mSelectedId, mSelectedId -> {
-            return  setIssueRecordById(mSelectedId.intValue());
+            return  setIssueRecordById(mSelectedId);
         });
 
+
+        mResultIssueItemDataModelByObject = Transformations.switchMap(mSelectedIssue, mSelectedIssue -> {
+            return  setIssueByObject(mSelectedIssue);
+        });
 
 
     }
@@ -174,17 +182,42 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-
+// ADD RECORD
 
     public void addIssueRecord(IssueDataModel issueDataModel) {
         mIssueRepository.addIssueRecord(issueDataModel);
     }
 
+    // update record
 
     public void updateIssueTitleRecord(String titleold, String titlenew) {
         mIssueRepository.updateIssueTitleRecord(titleold,titlenew);
 
     }
+
+
+// set from UI the object ISSue from UI cached list, fire the chain reaction and set the observable
+
+    public void setIssueByUi(IssueDataModel issuebyui) {
+        mSelectedIssue.setValue(issuebyui);
+    }
+
+    @NonNull
+    public LiveData<Resource<IssueDataModel>> getIssueItemDataModelByObject() {
+        // observable of the stream to be observed by the fragment
+        return mResultIssueItemDataModelByObject;
+    }
+
+   // transformed stream from the chain reaction
+    @NonNull
+    public LiveData<Resource<IssueDataModel>> setIssueByObject(IssueDataModel obj) {
+        // stream of the actual data coming from the transformation fired by the item click on the UI
+        return mIssueRepository.getWrappedIssueObject(mSelectedIssue);
+    }
+
+
+
+
 
 
 

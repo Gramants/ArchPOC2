@@ -69,7 +69,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         super.onResume();
         // as it is the first fragment of the pager, the first time the fragmentBecameVisible() is not called
         // but onresume yes
-        Log.e("STEFANO", "onresume ");
+        Log.e("STEFANO", "onresume fragment B");
 
 
     }
@@ -77,7 +77,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.e("STEFANO", "onActivityCreated");
 
         if (savedInstanceState != null) {
             if (savedInstanceState.getParcelable("contributor") != null) {
@@ -95,49 +95,6 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
 
 
 
-        repositoryViewModel.getRecordFromDb().observe(this, resource -> {
-            {
-
-                if (resource != null) {
-
-                    if (resource.status.equals(Status.SUCCESSFROMDB)) {
-                        Log.e("STEFANO", "Status.SUCCESSFROMDB");
-                    }
-
-                    if (resource.data != null) {
-                        Log.e("STEFANO", "issue da db " + resource.data.getTitle());
-                        mFragmentDetailBinding.setIssue(resource.data);
-                        this.mClickedIssueModel = resource.data;
-                    }
-                    //mFragmentDetailBinding.executePendingBindings();
-                }
-            }
-        });
-
-        Log.e("STEFANO", "onactivitycreated listening to observable");
-
-
-        businessViewModel.getContributorContent().observe(this, resource -> {
-            {
-                Log.e("STEFANO", "contributor  " + resource.getTitle());
-                mFragmentDetailBinding.setContributor(resource);
-                this.mClickedContributorModel = resource;
-                // mFragmentDetailBinding.executePendingBindings();
-            }
-        });
-
-
-        businessViewModel.getIssueContent().observe(this, resource -> {
-            {
-                if (resource != null) {
-                    // here I have straight the object not wrapped in any Resource
-                    Log.e("STEFANO", "issue da db " + resource.getTitle());
-                    this.mClickedIssueModel = resource;
-                    mFragmentDetailBinding.setIssue(resource);
-
-                }
-            }
-        });
 
 
     }
@@ -153,6 +110,80 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
 
     @Override
     public void fragmentBecameVisible() {
+        Log.e("STEFANO", "fragmentBecameVisible");
+
+
+
+        repositoryViewModel.getRecordFromDb().observe(this, resource -> {
+            {
+
+                if (resource != null) {
+
+                    if (resource.status.equals(Status.SUCCESSFROMDB)) {
+                        Log.e("STEFANO", "Status.SUCCESSFROMDB");
+                    }
+
+                    if (resource.data != null) {
+                        Log.e("STEFANO", "issue da db " + resource.data.getTitle());
+                        mFragmentDetailBinding.setIssue(resource.data);
+                        this.mClickedIssueModel = resource.data;
+                    }
+                    mFragmentDetailBinding.executePendingBindings();
+                }
+            }
+        });
+
+
+        repositoryViewModel.getIssueItemDataModelByObject().observe(this, resource -> {
+            {
+
+                if (resource != null) {
+
+                    if (resource.status.equals(Status.SUCCESSFROMUI)) {
+                        Log.e("STEFANO", "Status.SUCCESSFROMUI");
+                    }
+
+                    if (resource.data != null) {
+                        Log.e("STEFANO", "issue da UI " + resource.data.getTitle());
+                        mFragmentDetailBinding.setIssue(resource.data);
+                        this.mClickedIssueModel = resource.data;
+                    }
+                    mFragmentDetailBinding.executePendingBindings();
+                }
+            }
+        });
+
+
+
+
+
+        Log.e("STEFANO", "onactivitycreated listening to observable");
+
+
+        businessViewModel.getContributorContent().observe(this, resource -> {
+            {
+                Log.e("STEFANO", "contributor  " + resource.getTitle());
+                mFragmentDetailBinding.setContributor(resource);
+                this.mClickedContributorModel = resource;
+                // mFragmentDetailBinding.executePendingBindings();
+            }
+        });
+
+/*
+        businessViewModel.getIssueContent().observe(this, resource -> {
+            {
+                if (resource != null) {
+                    // here I have straight the object not wrapped in any Resource
+                    Log.e("STEFANO", "issue da db " + resource.getTitle());
+                    this.mClickedIssueModel = resource;
+                    mFragmentDetailBinding.setIssue(resource);
+
+                }
+            }
+        });
+*/
+
+
 
 
     }

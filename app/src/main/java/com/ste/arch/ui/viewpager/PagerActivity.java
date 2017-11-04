@@ -49,7 +49,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
     private SearchView mSearchView;
     private Toolbar mToolbar;
     private String mSearchString;
-    private CharSequence titles[]= {"Fragment A","Dummy", "Dummy", "Dummy", "Dummy","Fragment B", "Dummy","Dummy", "Dummy", "Dummy","Fragment C"};
+    private CharSequence titles[]= {"Fragment A","Fragment B","Dummy", "Dummy", "Dummy", "Dummy","Fragment B", "Dummy","Dummy", "Dummy", "Dummy","Fragment C"};
     private FloatingActionButton mAddRecord;
     private FloatingActionButton mUpdateRecord;
 
@@ -193,8 +193,9 @@ public class PagerActivity extends DaggerAppCompatActivity {
         public static final int FRAGMENT_8_POS = 8;
         public static final int FRAGMENT_9_POS = 9;
         public static final int FRAGMENT_10_POS = 10;
+        public static final int FRAGMENT_11_POS = 11;
+        public static final int FRAGMENT_COUNT = 12;
 
-        public static final int FRAGMENT_COUNT = 11;
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -206,17 +207,17 @@ public class PagerActivity extends DaggerAppCompatActivity {
                 case FRAGMENT_0_POS :
                     return BlankFragmentA.newInstance();  // A
                 case FRAGMENT_1_POS:
-                    return BlankFragment.newInstance();
+                    return BlankFragmentB.newInstance();  // B  still in fragmentmanager when in A
                 case FRAGMENT_2_POS:
                     return BlankFragment.newInstance();
                 case FRAGMENT_3_POS:
                     return BlankFragment.newInstance();
                 case FRAGMENT_4_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_5_POS :
-                    return BlankFragmentB.newInstance(); // B
-                case FRAGMENT_6_POS :
+                case FRAGMENT_5_POS:
                     return BlankFragment.newInstance();
+                case FRAGMENT_6_POS :
+                    return BlankFragmentB.newInstance(); // B   not more in fragment manager when in A or B
                 case FRAGMENT_7_POS :
                     return BlankFragment.newInstance();
                 case FRAGMENT_8_POS :
@@ -224,6 +225,8 @@ public class PagerActivity extends DaggerAppCompatActivity {
                 case FRAGMENT_9_POS :
                     return BlankFragment.newInstance();
                 case FRAGMENT_10_POS :
+                    return BlankFragment.newInstance();
+                case FRAGMENT_11_POS :
                     return BlankFragmentC.newInstance();  // C
                 default:
                     break;

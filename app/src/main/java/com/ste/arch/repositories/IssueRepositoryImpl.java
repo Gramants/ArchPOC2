@@ -16,6 +16,7 @@ import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.AddRecord;
 import com.ste.arch.repositories.asyncoperations.Resource;
+import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.asyncoperations.SelectRecord;
 import com.ste.arch.repositories.asyncoperations.UpdateRecord;
 import com.ste.arch.repositories.database.IssueDao;
@@ -230,7 +231,7 @@ public class IssueRepositoryImpl implements IssueRepository {
                         if (temp!=null)
                         {
                             // in case I have deleted the record that is shown already in the fragment
-                            input.setTitle(temp.getTitle() + " MAP transformed!");
+                            input.setTitle(temp.getTitle() + " (MAP transformed and FROM DB)");
                         }
                         return temp;
                     }
@@ -239,6 +240,22 @@ public class IssueRepositoryImpl implements IssueRepository {
 
             }
         }.getAsLiveData();
+
+    }
+
+    @Override
+    public LiveData<Resource<IssueDataModel>> getWrappedIssueObject(LiveData<IssueDataModel> obj) {
+
+
+        return new SelectObject<IssueDataModel>() {
+
+            @NonNull
+            @Override
+            protected LiveData<IssueDataModel> getObject() {
+                return obj;
+            }
+        }.getAsLiveData();
+
 
     }
 
