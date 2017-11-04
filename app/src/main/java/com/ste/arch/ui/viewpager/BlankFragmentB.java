@@ -114,17 +114,19 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
 
 
 //getMixedDetailResult
-        repositoryViewModel.getRecordFromDb().observe(this, resource -> {
+        repositoryViewModel.getMixedDetailResult().observe(this, resource -> {
             {
 
                 if (resource != null) {
 
                     if (resource.status.equals(Status.SUCCESSFROMDB)) {
-                        Log.e("STEFANO", "Status.SUCCESSFROMDB");
+                        Log.e("STEFANO", "Fragment Status.SUCCESSFROMDB");
                     }
-
+                    else if (resource.status.equals(Status.SUCCESSFROMUI)) {
+                        Log.e("STEFANO", "Fragment Status.SUCCESSFROMUI");
+                    }
                     if (resource.data != null) {
-                        Log.e("STEFANO", "issue da db " + resource.data.getTitle());
+                        Log.e("STEFANO", "Fragment  issue " + resource.data.getTitle());
                         mFragmentDetailBinding.setIssue(resource.data);
                         this.mClickedIssueModel = resource.data;
                     }
@@ -133,7 +135,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
             }
         });
 
-
+/*
         repositoryViewModel.getIssueItemDataModelByObject().observe(this, resource -> {
             {
 

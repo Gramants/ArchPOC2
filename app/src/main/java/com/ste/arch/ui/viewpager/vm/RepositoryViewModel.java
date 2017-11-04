@@ -216,6 +216,7 @@ public class RepositoryViewModel extends ViewModel {
     @NonNull
     public LiveData<Resource<IssueDataModel>> setIssueByObject(IssueDataModel obj) {
         // stream of the actual data coming from the transformation fired by the item click on the UI
+        
         return mIssueRepository.getWrappedIssueObject(mSelectedIssue);
     }
 
@@ -224,17 +225,17 @@ public class RepositoryViewModel extends ViewModel {
     public LiveData<Resource<IssueDataModel>> setMixedDetailResult(LiveData<Resource<IssueDataModel>> obj1, LiveData<Resource<IssueDataModel>> obj2) {
 
 
-        return new MixResource<IssueDataModel>() {
+        return new MixResource<Resource<IssueDataModel>>() {
 
             @NonNull
             @Override
-            protected LiveData<IssueDataModel> getUiData() {
-                return obj1.;
+            protected LiveData<Resource<IssueDataModel>> getUiData() {
+                return obj1;
             }
 
             @NonNull
             @Override
-            protected LiveData<IssueDataModel> getDbData() {
+            protected LiveData<Resource<IssueDataModel>> getDbData() {
                 return obj2;
             }
         }.getAsLiveData();

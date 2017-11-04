@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import com.ste.arch.entities.IssueDataModel;
 
 public abstract class MixResource<ResultType> {
-    private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
+    private final MediatorLiveData<ResultType> result = new MediatorLiveData<>();
 
     @MainThread
     public MixResource() {
@@ -20,13 +20,13 @@ public abstract class MixResource<ResultType> {
         result.addSource(dbSource, data -> {
             result.removeSource(dbSource);
             if (dbSource!=null) {
-                result.addSource(dbSource, newData -> result.setValue(Resource.successfromdb(newData)));
+                result.addSource(dbSource, newData -> result.setValue(newData));
             }
         });
         result.addSource(uiSource, data -> {
             result.removeSource(uiSource);
             if (uiSource!=null) {
-                result.addSource(uiSource, newData -> result.setValue(Resource.successfromdb(newData)));
+                result.addSource(uiSource, newData -> result.setValue(newData));
             }
         });
 
@@ -44,7 +44,7 @@ public abstract class MixResource<ResultType> {
 
 
 
-    public final LiveData<Resource<ResultType>> getAsLiveData() {
+    public final LiveData<ResultType> getAsLiveData() {
         return result;
     }
 }
