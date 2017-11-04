@@ -113,7 +113,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
         Log.e("STEFANO", "fragmentBecameVisible");
 
 
-
+//getMixedDetailResult
         repositoryViewModel.getRecordFromDb().observe(this, resource -> {
             {
 

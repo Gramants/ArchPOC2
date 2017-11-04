@@ -4,6 +4,8 @@ package com.ste.arch.repositories.asyncoperations;
         import android.support.annotation.NonNull;
         import android.support.annotation.Nullable;
 
+        import com.ste.arch.entities.IssueDataModel;
+
 
 public class Resource<T> {
     @NonNull
@@ -36,4 +38,6 @@ public class Resource<T> {
     public static <T> Resource<T> successfromui(@NonNull T data) {
         return new Resource<>(Status.SUCCESSFROMUI, data, null);
     }
+
+
 }

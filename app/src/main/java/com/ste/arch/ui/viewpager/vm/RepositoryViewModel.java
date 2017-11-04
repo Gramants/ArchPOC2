@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.IssueDataModel;
@@ -14,6 +13,7 @@ import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
 import com.ste.arch.repositories.IssueRepository;
+import com.ste.arch.repositories.asyncoperations.MixResource;
 import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
@@ -31,8 +31,10 @@ public class RepositoryViewModel extends ViewModel {
 
     private MutableLiveData<QueryString> mQueryStringObject;
     private MutableLiveData<String> mMessageSnackbar;
+
     private MutableLiveData<Integer> mSelectedId;
     private MutableLiveData<IssueDataModel> mSelectedIssue;
+
 
 
     private LiveData<String> mResultMessageSnackbar;
@@ -117,6 +119,8 @@ public class RepositoryViewModel extends ViewModel {
         mResultIssueItemDataModelByObject = Transformations.switchMap(mSelectedIssue, mSelectedIssue -> {
             return  setIssueByObject(mSelectedIssue);
         });
+
+
 
 
     }
@@ -217,11 +221,32 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
+    public LiveData<Resource<IssueDataModel>> setMixedDetailResult(LiveData<Resource<IssueDataModel>> obj1, LiveData<Resource<IssueDataModel>> obj2) {
+
+
+        return new MixResource<IssueDataModel>() {
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<IssueDataModel>> getUiData() {
+                return obj1;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<IssueDataModel>> getDbData() {
+                return obj2;
+            }
+        }.getAsLiveData();
+
+
+    }
 
 
 
-
-
+    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
+        return setMixedDetailResult(mResultIssueItemDataModel,mResultIssueItemDataModelByObject);
+    }
 
 
 
