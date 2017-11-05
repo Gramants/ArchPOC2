@@ -14,8 +14,6 @@ import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
 import com.ste.arch.repositories.IssueRepository;
-import com.ste.arch.repositories.asyncoperations.MixResource;
-import com.ste.arch.repositories.asyncoperations.MixResource2;
 import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
@@ -50,13 +48,13 @@ public class RepositoryViewModel extends ViewModel {
     private ContributorRepository mContributorRepository;
     private PersistentStorageProxy mPersistentStorageProxy;
 
-
+//list streamer
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
+//object streamers
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
-    private MixResource2 trigger;
-
-    private MediatorLiveData<Resource<IssueDataModel>> mediatorLiveData;
+    private MediatorLiveData<Resource<IssueDataModel>> mIssueResultItemMixer;
+    
 
     @Inject
     public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
@@ -97,7 +95,7 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-        mediatorLiveData = new MediatorLiveData<>();
+        mIssueResultItemMixer = new MediatorLiveData<>();
 
 
 
@@ -127,27 +125,26 @@ public class RepositoryViewModel extends ViewModel {
         });
 
 
-        //trigger = new MixResource2(mResultIssueItemDataModel, mResultIssueItemDataModelByObject);
 
 
+        // mix in one stream the 2 source to be catched by fragment B
         Observer<Resource<IssueDataModel>> issueByObject = new Observer<Resource<IssueDataModel>>() {
             @Override
             public void onChanged(@Nullable Resource<IssueDataModel> s) {
-                    mediatorLiveData.setValue(mResultIssueItemDataModelByObject.getValue());
+                    mIssueResultItemMixer.setValue(mResultIssueItemDataModelByObject.getValue());
             }
         };
 
         Observer<Resource<IssueDataModel>> issueByDB = new Observer<Resource<IssueDataModel>>() {
             @Override
             public void onChanged(@Nullable Resource<IssueDataModel> s) {
-                mediatorLiveData.setValue(mResultIssueItemDataModel.getValue());
+                mIssueResultItemMixer.setValue(mResultIssueItemDataModel.getValue());
             }
         };
 
 
-        mediatorLiveData.addSource(mResultIssueItemDataModelByObject, issueByObject);
-        mediatorLiveData.addSource(mResultIssueItemDataModel,issueByDB);
-
+        mIssueResultItemMixer.addSource(mResultIssueItemDataModelByObject, issueByObject);
+        mIssueResultItemMixer.addSource(mResultIssueItemDataModel,issueByDB);
 
 
     }
@@ -205,14 +202,23 @@ public class RepositoryViewModel extends ViewModel {
         return mIssueRepository.getIssueRecordById(id);
     }
 
+    /*
     @NonNull
     public LiveData<Resource<IssueDataModel>> getRecordFromDb() {
         // observable of the stream to be observed by the fragment
         return mResultIssueItemDataModel;
     }
+*/
+
+
+// the observable is a mix of the 2 possibilities
+    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
+        return mIssueResultItemMixer;
+    }
 
 
 
+    
 // ADD RECORD
 
     public void addIssueRecord(IssueDataModel issueDataModel) {
@@ -252,13 +258,13 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-
+/*
     public LiveData<Resource<IssueDataModel>> setMixedDetailResult(LiveData<Resource<IssueDataModel>> obj1, LiveData<Resource<IssueDataModel>> obj2) {
 //https://plus.google.com/+MichielPijnackerHordijk/posts/QGXF9gRomVi
         return  Transformations.switchMap(trigger, trigger -> {
             return null;
         });
-/*
+
         return new MixResource<Resource<IssueDataModel>,Resource<IssueDataModel>>() {
 
             @NonNull
@@ -274,37 +280,15 @@ public class RepositoryViewModel extends ViewModel {
             }
         }.getAsLiveData();
 
+
+
+    }
+
 */
 
-    }
 
 
 
-    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
-        //return mResultIssueItemDataModel;
-        return mediatorLiveData;
-        //return mResultIssueItemDataModelByObject;
-        //return setMixedDetailResult(mResultIssueItemDataModel,mResultIssueItemDataModelByObject);
-
-    }
-
-
-/*
-    class FoorBarLiveData extends MediatorLiveData<Pair<Foo, Bar>> {
-        public FoorBarLiveData(LiveData<Foo> fooLiveData, LiveData<Bar> barLiveData) {
-            addSource(fooLiveData, new Observer<Foo> {
-                public void onChanged(@Nullable Foo foo) {
-                    setValue(Pair.create(foo, barLiveData.getValue()));
-                }
-            });
-            addSource(barLiveData, new Observer<Bar> {
-                public void onChanged(@Nullable Bar bar) {
-                    setValue(Pair.create(fooLiveData.getValue(), bar));
-                }
-            });
-        }
-    }
-*/
 
 // set the stream from db at the startup or fron network the contributors
 
