@@ -3,6 +3,7 @@ package com.ste.arch.ui.viewpager.vm;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
 import com.ste.arch.repositories.IssueRepository;
 import com.ste.arch.repositories.asyncoperations.MixResource;
+import com.ste.arch.repositories.asyncoperations.MixResource2;
 import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
@@ -21,6 +23,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.annotations.Nullable;
+
+// http://www.zoftino.com/android-livedata-examples NEWORK CHECK
 
 public class RepositoryViewModel extends ViewModel {
 
@@ -49,8 +54,9 @@ public class RepositoryViewModel extends ViewModel {
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
+    private MixResource2 trigger;
 
-
+    private MediatorLiveData<Resource<IssueDataModel>> mediatorLiveData;
 
     @Inject
     public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
@@ -91,7 +97,7 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-
+        mediatorLiveData = new MediatorLiveData<>();
 
 
 
@@ -120,6 +126,27 @@ public class RepositoryViewModel extends ViewModel {
             return  setIssueByObject(mSelectedIssue);
         });
 
+
+        //trigger = new MixResource2(mResultIssueItemDataModel, mResultIssueItemDataModelByObject);
+
+
+        Observer<Resource<IssueDataModel>> issueByObject = new Observer<Resource<IssueDataModel>>() {
+            @Override
+            public void onChanged(@Nullable Resource<IssueDataModel> s) {
+                    mediatorLiveData.setValue(mResultIssueItemDataModelByObject.getValue());
+            }
+        };
+
+        Observer<Resource<IssueDataModel>> issueByDB = new Observer<Resource<IssueDataModel>>() {
+            @Override
+            public void onChanged(@Nullable Resource<IssueDataModel> s) {
+                mediatorLiveData.setValue(mResultIssueItemDataModel.getValue());
+            }
+        };
+
+
+        mediatorLiveData.addSource(mResultIssueItemDataModelByObject, issueByObject);
+        mediatorLiveData.addSource(mResultIssueItemDataModel,issueByDB);
 
 
 
@@ -216,16 +243,23 @@ public class RepositoryViewModel extends ViewModel {
     @NonNull
     public LiveData<Resource<IssueDataModel>> setIssueByObject(IssueDataModel obj) {
         // stream of the actual data coming from the transformation fired by the item click on the UI
-        
         return mIssueRepository.getWrappedIssueObject(mSelectedIssue);
     }
 
 
+    //LiveData<Resource<IssueDataModel>> y = Transformations.switchMap(trigger, trigger.);
+
+
+
+
 
     public LiveData<Resource<IssueDataModel>> setMixedDetailResult(LiveData<Resource<IssueDataModel>> obj1, LiveData<Resource<IssueDataModel>> obj2) {
-
-
-        return new MixResource<Resource<IssueDataModel>>() {
+//https://plus.google.com/+MichielPijnackerHordijk/posts/QGXF9gRomVi
+        return  Transformations.switchMap(trigger, trigger -> {
+            return null;
+        });
+/*
+        return new MixResource<Resource<IssueDataModel>,Resource<IssueDataModel>>() {
 
             @NonNull
             @Override
@@ -240,17 +274,37 @@ public class RepositoryViewModel extends ViewModel {
             }
         }.getAsLiveData();
 
+*/
 
     }
 
 
 
     public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
-        return setMixedDetailResult(mResultIssueItemDataModel,mResultIssueItemDataModelByObject);
+        //return mResultIssueItemDataModel;
+        return mediatorLiveData;
+        //return mResultIssueItemDataModelByObject;
+        //return setMixedDetailResult(mResultIssueItemDataModel,mResultIssueItemDataModelByObject);
+
     }
 
 
-
+/*
+    class FoorBarLiveData extends MediatorLiveData<Pair<Foo, Bar>> {
+        public FoorBarLiveData(LiveData<Foo> fooLiveData, LiveData<Bar> barLiveData) {
+            addSource(fooLiveData, new Observer<Foo> {
+                public void onChanged(@Nullable Foo foo) {
+                    setValue(Pair.create(foo, barLiveData.getValue()));
+                }
+            });
+            addSource(barLiveData, new Observer<Bar> {
+                public void onChanged(@Nullable Bar bar) {
+                    setValue(Pair.create(fooLiveData.getValue(), bar));
+                }
+            });
+        }
+    }
+*/
 
 // set the stream from db at the startup or fron network the contributors
 
