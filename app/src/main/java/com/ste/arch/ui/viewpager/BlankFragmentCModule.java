@@ -2,8 +2,6 @@ package com.ste.arch.ui.viewpager;
 
 import android.arch.lifecycle.ViewModelProviders;
 
-import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModelFactory;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModelFactory;
@@ -24,12 +22,6 @@ public class BlankFragmentCModule {
   PagerAgentViewModel providePagerAgentVm(BlankFragmentC blankFragmentC) {
     return ViewModelProviders.of(blankFragmentC.getActivity()).get(PagerAgentViewModel.class);
   }
-
-  @Provides
-  BusinessViewModel provideBusinessViewModel(BusinessViewModelFactory factory, BlankFragmentC blankFragmentC) {
-    return ViewModelProviders.of(blankFragmentC.getActivity(), factory).get(BusinessViewModel.class);
-  }
-
 
   @Provides
   RepositoryViewModel provideRepositoryViewModel(RepositoryViewModelFactory factory, BlankFragmentC blankFragmentC) {

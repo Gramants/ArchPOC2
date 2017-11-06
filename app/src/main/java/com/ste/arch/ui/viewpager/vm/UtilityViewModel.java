@@ -38,7 +38,6 @@ public class UtilityViewModel extends ViewModel {
 
 
 
-
     public void setObservableNetworkStatus() {
         liveDataIsInternetConnected.setValue(mCheckNetwork.isConnectedToInternet());
     }
@@ -46,7 +45,6 @@ public class UtilityViewModel extends ViewModel {
     public SingleLiveEvent<Boolean> getObservableNetworkStatus() {
         return liveDataIsInternetConnected;
     }
-
 
 
 
@@ -68,8 +66,5 @@ public class UtilityViewModel extends ViewModel {
     public void setSnackBar(String msg) {
         livedatasnackbar.setValue(msg);
     }
-
-
-
 
 }

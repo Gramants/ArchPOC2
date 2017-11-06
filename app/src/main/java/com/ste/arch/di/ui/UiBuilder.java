@@ -15,7 +15,7 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class UiBuilder {
 
-  //view pager
+
   @ContributesAndroidInjector(modules = PagerActivityModule.class)
   abstract PagerActivity bindPagerActivity();
 
@@ -27,7 +27,7 @@ public abstract class UiBuilder {
 
   @ContributesAndroidInjector(modules = BlankFragmentCModule.class)
   abstract BlankFragmentC bindBlankFragmentC();
-  //master detail
+
 
 
 }

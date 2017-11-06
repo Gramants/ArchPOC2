@@ -12,9 +12,6 @@ import dagger.android.HasActivityInjector;
 import javax.inject.Inject;
 
 
-/**
- * Created by Charles Ng on 7/9/2017.
- */
 
 public class MyApplication extends Application implements HasActivityInjector{
 

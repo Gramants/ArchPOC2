@@ -46,7 +46,6 @@ public class BlankFragment extends Fragment implements FragmentVisibility {
 
     @Override
     public void fragmentBecameVisible() {
-        Log.e("STEFANO","fragmentBecameVisible Blank");
 
     }
 }

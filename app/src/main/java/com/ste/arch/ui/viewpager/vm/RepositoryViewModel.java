@@ -29,20 +29,11 @@ import io.reactivex.annotations.Nullable;
 public class RepositoryViewModel extends ViewModel {
 
 
-    //private MediatorLiveData<List<ContributorDataModel>> mApiContributorResponse;
-
-
-
     private MutableLiveData<QueryString> mQueryStringObject;
-    private MutableLiveData<String> mMessageSnackbar;
 
     private MutableLiveData<Integer> mSelectedId;
     private MutableLiveData<IssueDataModel> mSelectedIssue;
     private MutableLiveData<ContributorDataModel> mSelectedContributor;
-
-
-    private LiveData<String> mResultMessageSnackbar;
-    private LiveData<List<ContributorDataModel>> mResultContributorDataModel;
 
 
     private IssueRepository mIssueRepository;
@@ -79,15 +70,8 @@ public class RepositoryViewModel extends ViewModel {
     public void init() {
 
         // invoked only by the factory of the container Activity
-
-
-
         // UI click and message events
         mQueryStringObject = new MutableLiveData<>();
-
-        mMessageSnackbar = new MutableLiveData<>();
-
-
 
 
 // ISSUE
@@ -128,6 +112,9 @@ public class RepositoryViewModel extends ViewModel {
         });
 
 
+
+
+
         // ISSUE mix in one stream the 2 source to be catched by fragment B
         // 1
         Observer<Resource<IssueDataModel>> issueByObject = new Observer<Resource<IssueDataModel>>() {
@@ -144,9 +131,10 @@ public class RepositoryViewModel extends ViewModel {
             }
         };
 
-
         mIssueResultItemMixer.addSource(mResultIssueItemDataModelByObject, issueByObject);
         mIssueResultItemMixer.addSource(mResultIssueItemDataModel,issueByDB);
+
+
 
 
 
@@ -161,21 +149,6 @@ public class RepositoryViewModel extends ViewModel {
         mResultContributorListDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadContributors(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
-
-
-
-
-
-
-        //send msg to snackbar   //STEP2-c
-        // UI event transformation
-        mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
-            return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
-        });
-
-
-
-
 
     }
 
@@ -321,36 +294,6 @@ public class RepositoryViewModel extends ViewModel {
         return mContributorRepository.getWrappedIssueObject(mSelectedContributor);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // saving the good query string to sharedpref
-    public void saveSearchString(String searchstring) {
-        mPersistentStorageProxy.setSearchStringTemp(searchstring);
-    }
-
-
-    // Snackbar management
-
-
-    public LiveData<String> loadSnackBar(String temp) {
-        mMessageSnackbar.setValue(temp);
-        return mMessageSnackbar;
-    }
-
-    public LiveData<String> getSnackBar() {
-        return mResultMessageSnackbar;
-    }
 
 
     // call the starting select from db

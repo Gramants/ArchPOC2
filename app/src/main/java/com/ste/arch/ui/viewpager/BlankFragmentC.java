@@ -22,7 +22,6 @@ import com.ste.arch.adapters.ContributorDataAdapter;
 import com.ste.arch.adapters.RecyclerItemClickListener;
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.repositories.Status;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.UtilityViewModel;
@@ -43,9 +42,6 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
 
     @Inject
     PagerAgentViewModel pagerAgentViewModel;
-
-    @Inject
-    BusinessViewModel businessViewModel;
 
     @Inject
     RepositoryViewModel repositoryViewModel;

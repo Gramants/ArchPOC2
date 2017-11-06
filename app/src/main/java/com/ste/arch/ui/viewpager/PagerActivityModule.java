@@ -2,8 +2,6 @@ package com.ste.arch.ui.viewpager;
 
 import android.arch.lifecycle.ViewModelProviders;
 
-import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModelFactory;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModelFactory;
@@ -29,14 +27,6 @@ public class PagerActivityModule {
     return pagerAgentViewModel;
   }
 
-
-
-    @Provides
-    BusinessViewModel provideBusinessViewModel(BusinessViewModelFactory factory, PagerActivity pagerActivity) {
-        BusinessViewModel businessViewModel= ViewModelProviders.of(pagerActivity, factory).get(BusinessViewModel.class);
-        businessViewModel.init();
-        return businessViewModel;
-    }
 
     @Provides
     RepositoryViewModel provideRepositoryViewModel(RepositoryViewModelFactory factory, PagerActivity pagerActivity) {

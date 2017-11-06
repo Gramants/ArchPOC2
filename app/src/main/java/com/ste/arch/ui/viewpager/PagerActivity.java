@@ -19,7 +19,6 @@ import android.widget.SearchView;
 import com.ste.arch.R;
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.UtilityViewModel;
@@ -32,9 +31,6 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
     @Inject
     PagerAgentViewModel pagerAgentViewModel;
-
-    @Inject
-    BusinessViewModel businessViewModel;
 
     @Inject
     RepositoryViewModel repositoryViewModel;
@@ -154,7 +150,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
 
 
-        repositoryViewModel.getSnackBar().observe(this, snackMsg -> {
+        utilityViewModel.getSnackBar().observe(this, snackMsg -> {
             handleSnackBar(snackMsg);
         });
 
@@ -264,6 +260,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
             if (query.length == 2) {
                 repositoryViewModel.setQueryString(query[0], query[1], true);
                 utilityViewModel.setSavedSearchString(query[0]+"/"+query[1]);
+                utilityViewModel.setSnackBar("Search string: "+query[0]+"/"+query[1]);
             } else {
                 handleSnackBar("Error wrong format of input. Required format owner/repository_name");
             }

@@ -5,8 +5,6 @@ import android.databinding.DataBindingUtil;
 
 import com.ste.arch.R;
 import com.ste.arch.databinding.FragmentDetailBinding;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
-import com.ste.arch.ui.viewpager.vm.BusinessViewModelFactory;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModelFactory;
@@ -28,10 +26,6 @@ public class BlankFragmentBModule {
     return ViewModelProviders.of(blankFragmentB.getActivity()).get(PagerAgentViewModel.class);
   }
 
-  @Provides
-  BusinessViewModel provideBusinessViewModel(BusinessViewModelFactory factory, BlankFragmentB blankFragmentB) {
-    return ViewModelProviders.of(blankFragmentB.getActivity(), factory).get(BusinessViewModel.class);
-  }
 
   @Provides
   RepositoryViewModel provideRepositoryViewModel(RepositoryViewModelFactory factory, BlankFragmentB blankFragmentB) {
