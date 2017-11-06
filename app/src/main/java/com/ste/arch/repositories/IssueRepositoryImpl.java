@@ -80,6 +80,7 @@ public class IssueRepositoryImpl implements IssueRepository {
             @Override
             protected LiveData<List<IssueDataModel>> loadFromDb() {
                 // apply Transformation to order the results
+                // model transformation
                 return
                         Transformations.switchMap(issueDao.getAllIssue(),
                                 new Function<List<IssueDataModel>, LiveData<List<IssueDataModel>>>() {
@@ -181,14 +182,13 @@ public class IssueRepositoryImpl implements IssueRepository {
             @NonNull
             @Override
             protected LiveData<IssueDataModel> selectRecordById() {
-
+                // model transformation
                 return Transformations.map(issueDao.getIssueById(id), new Function<IssueDataModel, IssueDataModel>() {
                     @Override
                     public IssueDataModel apply(IssueDataModel input) {
                         IssueDataModel temp = input;
                         if (temp!=null)
                         {
-                            // in case I have deleted the record that is shown already in the fragment
                             input.setTitle(temp.getTitle() + " (.map transformed Source: DB)");
                         }
                         return temp;
@@ -210,14 +210,13 @@ public class IssueRepositoryImpl implements IssueRepository {
             @NonNull
             @Override
             protected LiveData<IssueDataModel> getObject() {
-
+            // model transformation
                 return Transformations.map(obj, new Function<IssueDataModel, IssueDataModel>() {
                     @Override
                     public IssueDataModel apply(IssueDataModel input) {
                         IssueDataModel temp = input;
                         if (temp!=null)
                         {
-                            // in case I have deleted the record that is shown already in the fragment
                             input.setTitle(temp.getTitle() + " (.map transformed Source: UI)");
                         }
                         return temp;

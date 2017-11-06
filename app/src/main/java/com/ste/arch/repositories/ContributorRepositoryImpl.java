@@ -77,6 +77,7 @@ public class ContributorRepositoryImpl implements ContributorRepository {
             @Override
             protected LiveData<List<ContributorDataModel>> loadFromDb() {
                 // apply Transformation to order the results
+                // model transformation
                 return
                         Transformations.switchMap(contributorDao.getAllContributors(),
                                 new Function<List<ContributorDataModel>, LiveData<List<ContributorDataModel>>>() {

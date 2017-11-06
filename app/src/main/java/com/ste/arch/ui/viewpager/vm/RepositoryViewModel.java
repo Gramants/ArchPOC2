@@ -104,16 +104,18 @@ public class RepositoryViewModel extends ViewModel {
 
 
         //Load async issues   //STEP2-a
+        // UI event transformation
         mResultIssueListDataModel= Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
 
         //select a record by id stream on click
+        // UI event transformation
         mResultIssueItemDataModel = Transformations.switchMap(mSelectedId, mSelectedId -> {
             return  setIssueRecordById(mSelectedId);
         });
 
-
+        // UI event transformation
         mResultIssueItemDataModelByObject = Transformations.switchMap(mSelectedIssue, mSelectedIssue -> {
             return  setIssueByObject(mSelectedIssue);
         });
@@ -149,6 +151,7 @@ public class RepositoryViewModel extends ViewModel {
         // LOAD CONTRIBUTOTS
 
         //Load async contributors  //STEP2-b
+        // UI event transformation
         mResultContributorListDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadContributors(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
@@ -159,6 +162,7 @@ public class RepositoryViewModel extends ViewModel {
 
 
         //send msg to snackbar   //STEP2-c
+        // UI event transformation
         mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
         });
