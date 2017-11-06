@@ -2,18 +2,12 @@ package com.ste.arch.repositories;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.ste.arch.Config;
 import com.ste.arch.Utils;
 import com.ste.arch.entities.ContributorDataModel;
-import com.ste.arch.entities.ContributorDataModel;
-import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.entities.NetworkErrorObject;
-import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
@@ -21,9 +15,7 @@ import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
 import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.database.ContributorDao;
-import com.ste.arch.repositories.database.IssueDao;
 import com.ste.arch.repositories.database.ProjectDb;
-import com.ste.arch.repositories.asyncoperations.ContributorDbManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +25,6 @@ import javax.inject.Inject;
 
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.ste.arch.entities.translator.DataTranslator.ContributorTranslator;
 
 
 public class ContributorRepositoryImpl implements ContributorRepository {

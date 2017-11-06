@@ -163,7 +163,7 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
                 new RecyclerItemClickListener(getActivity(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        
+
                        repositoryViewModel.setContributorByUi((ContributorDataModel) cache.get(position));
                        utilityViewModel.setSnackBar("Contributor name added to Detail tab");
                     }

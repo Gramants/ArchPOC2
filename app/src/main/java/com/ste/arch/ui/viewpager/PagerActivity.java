@@ -260,7 +260,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
         if (mSearchString.length() > 0) {
             String[] query = mSearchString.split("/");
             if (query.length == 2) {
-                utilityViewModel.setShowProgressInObserverFragments();
+                //utilityViewModel.setShowProgressInObserverFragments();
                 repositoryViewModel.setQueryString(query[0], query[1], true);
             } else {
                 handleSnackBar("Error wrong format of input. Required format owner/repository_name");

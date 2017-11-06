@@ -31,14 +31,5 @@ public class ContributorDbManager {
         }
     }
 
-    public static class DeleteContributorByIdAsyncTask  extends AsyncTask<Integer, Void, Void> {
-        private ProjectDb db;
-        public DeleteContributorByIdAsyncTask(ProjectDb userDatabase) {db = userDatabase;}
-
-        @Override
-        protected Void doInBackground(Integer... integers) {
-            db.contributorDao().deleteById(integers[0]);
-            return null;
-        }
-    }
+   
 }
