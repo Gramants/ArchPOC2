@@ -14,9 +14,6 @@ import com.ste.arch.ui.viewpager.vm.UtilityViewModelFactory;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Charles Ng on 3/10/2017.
- */
 
 @Module
 public class BlankFragmentBModule {
@@ -25,7 +22,6 @@ public class BlankFragmentBModule {
   PagerAgentViewModel providePagerAgentVm(BlankFragmentB blankFragmentB) {
     return ViewModelProviders.of(blankFragmentB.getActivity()).get(PagerAgentViewModel.class);
   }
-
 
   @Provides
   RepositoryViewModel provideRepositoryViewModel(RepositoryViewModelFactory factory, BlankFragmentB blankFragmentB) {
