@@ -1,5 +1,6 @@
 package com.ste.arch.ui.viewpager.vm;
 
+import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -9,6 +10,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
 import com.ste.arch.entities.ContributorDataModel;
+import com.ste.arch.entities.ContributorTransformed;
 import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
@@ -61,7 +63,7 @@ public class RepositoryViewModel extends ViewModel {
 // CONTRIBUTOR
 //contributor list streamer
     private LiveData<Resource<List<ContributorDataModel>>> mResultContributorListDataModel;
-
+    private LiveData<Resource<ContributorDataModel>> mResultContributorItemDataModelByObject;
 
 
     @Inject
@@ -115,11 +117,15 @@ public class RepositoryViewModel extends ViewModel {
             return  setIssueRecordById(mSelectedId);
         });
 
-        // UI event transformation
+        // UI event transformation single click on issue item
         mResultIssueItemDataModelByObject = Transformations.switchMap(mSelectedIssue, mSelectedIssue -> {
-            return  setIssueByObject(mSelectedIssue);
+            return  wrapIssueObject();
         });
 
+        // UI event transformation single click on contributor item
+        mResultContributorItemDataModelByObject = Transformations.switchMap(mSelectedContributor, mSelectedContributor -> {
+            return  wrapContributorObject();
+        });
 
 
         // ISSUE mix in one stream the 2 source to be catched by fragment B
@@ -175,12 +181,20 @@ public class RepositoryViewModel extends ViewModel {
 
 
     // the observable is a mix of the 2 possibilities
-    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
+    public LiveData<Resource<IssueDataModel>> getMixedDetailIssueResult() {
         return mIssueResultItemMixer;
     }
 
-
-
+//Model transform
+// transform the contributor livedata to become a different livedata
+    public LiveData<ContributorTransformed> getContributorObjectTransformed() {
+        return Transformations.map(mResultContributorItemDataModelByObject, new Function<Resource<ContributorDataModel>, ContributorTransformed>() {
+            @Override
+            public ContributorTransformed apply(Resource<ContributorDataModel> input) {
+                return new ContributorTransformed(input.data.getLogin()+" (.map Object transformation)");
+            }
+        });
+    }
 
 
 
@@ -278,9 +292,11 @@ public class RepositoryViewModel extends ViewModel {
         mSelectedIssue.setValue(issuebyui);
     }
 
+
+
    // transformed stream from the chain reaction
     @NonNull
-    public LiveData<Resource<IssueDataModel>> setIssueByObject(IssueDataModel obj) {
+    public LiveData<Resource<IssueDataModel>> wrapIssueObject() {
         // stream of the actual data coming from the transformation fired by the item click on the UI
         return mIssueRepository.getWrappedIssueObject(mSelectedIssue);
     }
@@ -293,7 +309,7 @@ public class RepositoryViewModel extends ViewModel {
 
     // transformed stream from the chain reaction
     @NonNull
-    public LiveData<Resource<ContributorDataModel>> setContributorByObject(ContributorDataModel obj) {
+    public LiveData<Resource<ContributorDataModel>> wrapContributorObject() {
         // stream of the actual data coming from the transformation fired by the item click on the UI
         return mContributorRepository.getWrappedIssueObject(mSelectedContributor);
     }

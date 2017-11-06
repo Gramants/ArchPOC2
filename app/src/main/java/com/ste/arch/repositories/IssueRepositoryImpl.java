@@ -204,7 +204,7 @@ public class IssueRepositoryImpl implements IssueRepository {
     @Override
     public LiveData<Resource<IssueDataModel>> getWrappedIssueObject(LiveData<IssueDataModel> obj) {
 
-
+        // apply a transformation to the UI click result
         return new SelectObject<IssueDataModel>() {
 
             @NonNull

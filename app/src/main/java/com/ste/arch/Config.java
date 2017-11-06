@@ -6,6 +6,4 @@ public class Config {
   public static final String CONTRIBUTORS_TABLE_NAME = "Contributors";
   public static final String DATABASE_NAME = "Project.db";
 
-  public static final String ISSUE_ENDPOINT="Issues";
-  public static final String CONTRIBUTOR_ENDPOINT="Contributors";
 }

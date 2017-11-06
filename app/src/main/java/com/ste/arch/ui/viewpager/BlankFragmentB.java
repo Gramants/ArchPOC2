@@ -114,7 +114,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
 
 
 //getMixedDetailResult
-        repositoryViewModel.getMixedDetailResult().observe(this, resource -> {
+        repositoryViewModel.getMixedDetailIssueResult().observe(this, resource -> {
             {
 
                 if (resource != null) {
@@ -134,6 +134,15 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
                 }
             }
         });
+
+        repositoryViewModel.getContributorObjectTransformed().observe(this, resource -> {
+            {
+                mFragmentDetailBinding.setContributor(resource);
+                this.mClickedContributorModel = resource;
+                mFragmentDetailBinding.executePendingBindings();
+            }
+        });
+
 
 /*
         repositoryViewModel.getIssueItemDataModelByObject().observe(this, resource -> {
