@@ -72,19 +72,5 @@
         android:textColor="#fff"
         app:layout_anchor="@id/fab2"
         app:layout_anchorGravity="center"/>
-<!--
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_gravity="top|start"
-        app:srcCompat="@android:drawable/ic_dialog_alert" />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_gravity="top|end"
-        app:srcCompat="@android:drawable/ic_dialog_alert" />-->
+
 </android.support.design.widget.CoordinatorLayout>

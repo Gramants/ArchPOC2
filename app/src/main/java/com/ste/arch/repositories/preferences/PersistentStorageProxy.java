@@ -9,7 +9,5 @@ public interface PersistentStorageProxy {
 
     void setSearchString(String searchString);
 
-    String getSearchStringTemp();
 
-    void setSearchStringTemp(String searchString);
 }

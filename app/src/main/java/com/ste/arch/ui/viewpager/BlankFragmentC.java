@@ -196,7 +196,6 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
 
     @Override
     public void fragmentBecameVisible() {
-        Log.e("STEFANO","fragmentBecameVisible C load  from Room");
         repositoryViewModel.setQueryString(null,null,false);
     }
 }

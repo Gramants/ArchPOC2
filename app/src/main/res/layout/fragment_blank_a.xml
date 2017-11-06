@@ -43,17 +43,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_textA2" />
 
+    <TextView
+        android:id="@+id/fragment_textA4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:gravity="center"
+        android:text="Hint: type GitHub user/repo i.e 'square/retrofit', then click, long click, and swipe. Results in Fragment(s) B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_textA3" />
     <Button
         android:id="@+id/btnA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
         android:text="Say Hello to Dummies and C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_textA3" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_textA4" />
 
 
 

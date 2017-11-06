@@ -41,6 +41,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_textC2" />
+    <TextView
+        android:id="@+id/fragment_textC4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:gravity="center"
+        android:text="Hint: Click and item after searching for user/repo. Results in Fragment(s) B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_textC3" />
+
     <Button
         android:id="@+id/btnC"
         android:layout_width="wrap_content"
@@ -48,12 +59,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="5dp"
         android:text="Say Hello to A and Dummies"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_textC2" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_textC4" />
 
 
 

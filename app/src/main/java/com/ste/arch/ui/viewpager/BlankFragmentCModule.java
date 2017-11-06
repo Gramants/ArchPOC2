@@ -11,9 +11,6 @@ import com.ste.arch.ui.viewpager.vm.UtilityViewModelFactory;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Charles Ng on 3/10/2017.
- */
 
 @Module
 public class BlankFragmentCModule {

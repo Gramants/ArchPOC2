@@ -17,7 +17,6 @@
 
         <LinearLayout
             android:id="@+id/movies_layout"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -25,25 +24,29 @@
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:background="@color/medium_grey"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
+                android:layout_margin="5dp"
                 android:paddingRight="16dp"
                 android:textStyle="bold"
                 android:text="@{issue.title}"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/contributor"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
-                android:paddingRight="16dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_margin="5dp"
                 android:textStyle="bold"
                 android:text="@{contributor.title}"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="16dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,9 +1,5 @@
 package com.ste.arch.entities.pojos;
 
-/**
- * Created by shahbaz on 14/05/17.
- */
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

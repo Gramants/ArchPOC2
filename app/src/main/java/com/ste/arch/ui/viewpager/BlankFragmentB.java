@@ -51,9 +51,7 @@ public class BlankFragmentB extends DaggerFragment implements FragmentVisibility
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.e("STEFANO", "onSaveInstanceState salvo");
         if ((mClickedContributorModel != null) || (mClickedIssueModel != null)) {
-            Log.e("STEFANO", "salvo o issue o contributor cliccati");
             outState.putParcelable("contributor", mClickedContributorModel);
             outState.putParcelable("issue", mClickedIssueModel);
         }

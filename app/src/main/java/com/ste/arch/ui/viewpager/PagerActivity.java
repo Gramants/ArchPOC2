@@ -12,7 +12,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -24,6 +23,7 @@ import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
 import com.ste.arch.ui.viewpager.vm.UtilityViewModel;
 
 import dagger.android.support.DaggerAppCompatActivity;
+
 import javax.inject.Inject;
 
 
@@ -47,7 +47,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
     private Toolbar mToolbar;
     private String mSearchString;
 
-    private CharSequence titles[]= {"Fragment A","Fragment B","Dummy", "Dummy", "Dummy", "Dummy","Fragment B", "Dummy","Dummy", "Dummy", "Dummy","Fragment C"};
+    private CharSequence titles[] = {"Fragment A", "Fragment B", "Dummy", "Dummy", "Dummy", "Dummy", "Fragment B", "Dummy", "Dummy", "Dummy", "Dummy", "Fragment C"};
     private FloatingActionButton mAddRecord;
     private FloatingActionButton mUpdateRecord;
 
@@ -62,7 +62,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
         mPager = findViewById(R.id.pager);
         mToolbar = findViewById(R.id.toolbar);
         mAddRecord = findViewById(R.id.fab1);
-        mUpdateRecord= findViewById(R.id.fab2);
+        mUpdateRecord = findViewById(R.id.fab2);
 
 
         mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -86,7 +86,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
         mTablayout.setupWithViewPager(mPager);
 
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()  {
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(final int position, final float v, final int i2) {
             }
@@ -106,12 +106,11 @@ public class PagerActivity extends DaggerAppCompatActivity {
         });
 
 
-
         mAddRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                repositoryViewModel.addIssueRecord(new IssueDataModel("url","url",0,"AAA INSERTED","A","2017-11-03T05:29:08Z","INSERTED","STE","url"));
-                repositoryViewModel.addContributorRecord(new ContributorDataModel("AAA INSERTED","STE"));
+                repositoryViewModel.addIssueRecord(new IssueDataModel("url", "url", 0, "AAA INSERTED", "A", "2017-11-03T05:29:08Z", "INSERTED", "STE", "url"));
+                repositoryViewModel.addContributorRecord(new ContributorDataModel("AAA INSERTED", "STE"));
 
             }
         });
@@ -120,8 +119,8 @@ public class PagerActivity extends DaggerAppCompatActivity {
         mUpdateRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                repositoryViewModel.updateIssueTitleRecord("AAA INSERTED","BBB UPDATED!");
-                repositoryViewModel.updateContributorRecord("AAA INSERTED","BBB UPDATED!");
+                repositoryViewModel.updateIssueTitleRecord("AAA INSERTED", "BBB UPDATED!");
+                repositoryViewModel.updateContributorRecord("AAA INSERTED", "BBB UPDATED!");
 
             }
         });
@@ -137,33 +136,27 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
         utilityViewModel.getObservableNetworkStatus().observe(this, isInternetConnected -> {
 
-            if ( (isInternetConnected) && (!TextUtils.isEmpty(mSearchString)) )
-            {
+            if ((isInternetConnected) && (!TextUtils.isEmpty(mSearchString))) {
                 doSearch(mSearchString);
-            }
-            else
-            {
+            } else {
                 handleSnackBar("No internet connection!");
             }
 
         });
 
 
-
         utilityViewModel.getSnackBar().observe(this, snackMsg -> {
             handleSnackBar(snackMsg);
         });
 
-
+        // force network download in activity and save in db for issues and contributors
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
-                   Log.e("STEFANO","network call saved issue list by activity in Room");
                 }
         );
 
         repositoryViewModel.getApiContributorResponse().observe(this,
                 apiResponse -> {
-                    Log.e("STEFANO","network call saved contributor list by activity in Room");
                 }
         );
 
@@ -171,13 +164,17 @@ public class PagerActivity extends DaggerAppCompatActivity {
         utilityViewModel.getObservableSavedSearchString().observe(this, searchString -> {
             mSearchView.setIconified(false);
             mSearchView.setQuery(new String(searchString), false);
-
+            mSearchView.clearFocus();
         });
-
 
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mSearchView.clearFocus();
+    }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         public static final int FRAGMENT_0_POS = 0;
@@ -200,9 +197,8 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            switch (position)
-            {
-                case FRAGMENT_0_POS :
+            switch (position) {
+                case FRAGMENT_0_POS:
                     return BlankFragmentA.newInstance();  // A
                 case FRAGMENT_1_POS:
                     return BlankFragmentB.newInstance();  // B  still in fragmentmanager when in A
@@ -214,17 +210,17 @@ public class PagerActivity extends DaggerAppCompatActivity {
                     return BlankFragment.newInstance();
                 case FRAGMENT_5_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_6_POS :
+                case FRAGMENT_6_POS:
                     return BlankFragmentB.newInstance(); // B   not more in fragment manager when in A or B
-                case FRAGMENT_7_POS :
+                case FRAGMENT_7_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_8_POS :
+                case FRAGMENT_8_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_9_POS :
+                case FRAGMENT_9_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_10_POS :
+                case FRAGMENT_10_POS:
                     return BlankFragment.newInstance();
-                case FRAGMENT_11_POS :
+                case FRAGMENT_11_POS:
                     return BlankFragmentC.newInstance();  // C
                 default:
                     break;
@@ -236,6 +232,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
         public int getCount() {
             return FRAGMENT_COUNT;
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
 
@@ -251,16 +248,15 @@ public class PagerActivity extends DaggerAppCompatActivity {
     }
 
 
-
-
     private void doSearch(String mSearchString) {
 
         if (mSearchString.length() > 0) {
             String[] query = mSearchString.split("/");
             if (query.length == 2) {
                 repositoryViewModel.setQueryString(query[0], query[1], true);
-                utilityViewModel.setSavedSearchString(query[0]+"/"+query[1]);
-                utilityViewModel.setSnackBar("Search string: "+query[0]+"/"+query[1]);
+                utilityViewModel.setSavedSearchString(query[0] + "/" + query[1]);
+                utilityViewModel.setSnackBar("Search string: " + query[0] + "/" + query[1]);
+
             } else {
                 handleSnackBar("Error wrong format of input. Required format owner/repository_name");
             }
