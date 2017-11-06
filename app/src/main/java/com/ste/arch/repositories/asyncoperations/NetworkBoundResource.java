@@ -37,19 +37,14 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     }
 
     private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
-        Log.e("STEFANO","fetchFromNetwork");
         result.addSource(dbSource, newData -> result.setValue(Resource.loading(newData)));
         createCall().enqueue(new Callback<RequestType>() {
             @Override
             public void onResponse(Call<RequestType> call, Response<RequestType> response) {
                 result.removeSource(dbSource);
                 if (response.isSuccessful()) {
-                    Log.e("STEFANO","result.removeSource");
                     saveResultAndReInit(response.body());
-                }
-                else
-                {
-                    Log.e("STEFANO","onFailure "+response.message());
+                } else {
                     onFetchFailed();
                     result.removeSource(dbSource);
                     result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message(), newData)));
@@ -60,7 +55,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
             @Override
             public void onFailure(Call<RequestType> call, Throwable t) {
-                Log.e("STEFANO","onFailure "+t.getMessage());
                 onFetchFailed();
                 result.removeSource(dbSource);
                 result.addSource(dbSource, newData -> result.setValue(Resource.error(t.getMessage(), newData)));
@@ -70,7 +64,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     @MainThread
     private void saveResultAndReInit(RequestType response) {
-        Log.e("STEFANO","saveResultAndReInit");
 
         new AsyncTask<Void, Void, Void>() {
 

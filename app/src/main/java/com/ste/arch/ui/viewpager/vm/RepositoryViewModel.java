@@ -48,11 +48,13 @@ public class RepositoryViewModel extends ViewModel {
     private ContributorRepository mContributorRepository;
     private PersistentStorageProxy mPersistentStorageProxy;
 
-//list streamer
+//issue list streamer
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
-//object streamers
+//issue item object streamers
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
+
+// stream container of issue object from ui or from db
     private MediatorLiveData<Resource<IssueDataModel>> mIssueResultItemMixer;
     
 
@@ -76,7 +78,7 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-        // UI events
+        // UI click and message events
         mQueryStringObject = new MutableLiveData<>();
 
         mMessageSnackbar = new MutableLiveData<>();
@@ -92,7 +94,6 @@ public class RepositoryViewModel extends ViewModel {
 
         // init issue Item  and Id item
         mResultIssueItemDataModel=new MutableLiveData<>();
-
 
 
         mIssueResultItemMixer = new MediatorLiveData<>();

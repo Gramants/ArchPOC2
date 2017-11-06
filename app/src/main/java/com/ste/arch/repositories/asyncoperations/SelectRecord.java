@@ -26,32 +26,18 @@ public abstract class SelectRecord<ResultType> {
         distinctLiveData.addSource(dbSource, new Observer<ResultType>() {
             private Boolean initialized = false;
             private ResultType lastObj = null;
+
             @Override
             public void onChanged(@Nullable ResultType obj) {
 
                 if (!initialized) {
                     initialized = true;
                     lastObj = obj;
-                    Log.e("STEFANO", "!initialized DB");
                     distinctLiveData.postValue(Resource.successfromdb(lastObj));
-                }
-
-                 //adding this conditions there will be the problem of multiple subscriptions!!!!!
-                else if ((obj == null && lastObj != null) || obj != lastObj) {
-
-                    if (obj == null && lastObj != null)
-                        Log.e("STEFANO", "obj == null && lastObj != null");
-                    else
-                        Log.e("STEFANO", "obj != lastObj");
-
-                    Log.e("STEFANO", "already initialized DB will not post the value");
+                } else if ((obj == null && lastObj != null) || obj != lastObj) {
                     lastObj = obj;
                     distinctLiveData.postValue(Resource.successfromdb(lastObj));
-                }
-
-                else
-                {
-                    Log.e("STEFANO", "already initialized Db send null");
+                } else {
                     distinctLiveData.postValue(null);
                 }
             }

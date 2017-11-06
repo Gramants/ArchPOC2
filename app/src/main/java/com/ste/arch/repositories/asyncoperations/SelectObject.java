@@ -26,24 +26,15 @@ public abstract class SelectObject<ResultType> {
                 if (!initialized) {
                     initialized = true;
                     lastObj = obj;
-                    Log.e("STEFANO", "!initialized Object");
                     distinctLiveData.postValue(Resource.successfromui(lastObj));
                 }
                 else if ((obj == null && lastObj != null) || obj != lastObj) {
-
-                    if (obj == null && lastObj != null)
-                        Log.e("STEFANO", "obj == null && lastObj != null");
-                    else
-                        Log.e("STEFANO", "obj != lastObj");
-
-                    Log.e("STEFANO", "already initialized Object will not post the value");
                     lastObj = obj;
                     distinctLiveData.postValue(Resource.successfromui(lastObj));
                 }
 
                 else
                 {
-                    Log.e("STEFANO", "already initialized Object post null");
                     distinctLiveData.postValue(null);
                 }
 
