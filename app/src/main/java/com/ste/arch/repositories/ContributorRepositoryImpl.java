@@ -11,8 +11,10 @@ import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
+import com.ste.arch.repositories.asyncoperations.AddRecord;
 import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
+import com.ste.arch.repositories.asyncoperations.UpdateRecord;
 import com.ste.arch.repositories.database.ContributorDao;
 import com.ste.arch.repositories.database.ProjectDb;
 
@@ -104,11 +106,7 @@ public class ContributorRepositoryImpl implements ContributorRepository {
             }
         }.getAsLiveData();
     }
-    
 
-
-
-   
 
     private LiveData<List<ContributorDataModel>> getTransformedDbResult(List<ContributorDataModel> result) {
         return new LiveData<List<ContributorDataModel>>() {
@@ -131,4 +129,40 @@ public class ContributorRepositoryImpl implements ContributorRepository {
             }
         }.getAsLiveData();
     }
+
+
+    @Override
+    public void addContributorRecord(ContributorDataModel contributorDataModel) {
+        new AddRecord() {
+
+            @Override
+            protected void addRecord() {
+                db.beginTransaction();
+                try {
+                    contributorDao.insertRecord(contributorDataModel);
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+        };
+    }
+
+    @Override
+    public void updateContributorTitleRecord(String titleold, String titlenew) {
+        new UpdateRecord() {
+            @Override
+            protected void updateRecord() {
+                db.beginTransaction();
+                try {
+                    contributorDao.updateTitle(titleold, titlenew);
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+        };
+    }
+
 }

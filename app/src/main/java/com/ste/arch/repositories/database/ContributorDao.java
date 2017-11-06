@@ -27,9 +27,20 @@ public abstract class ContributorDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   public abstract void insert(List<ContributorDataModel> contributor);
 
+  @Query("UPDATE Contributors SET login = :titlenew  WHERE login = :titleold")
+  public abstract void updateTitle(String titleold, String titlenew);
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  public abstract void insertRecord(ContributorDataModel contributorDataModel);
+
   @Transaction
   public void updateData(List<ContributorDataModel> contributor) {
     deleteAll();
     insert(contributor);
   }
+
+
+
+
+
 }

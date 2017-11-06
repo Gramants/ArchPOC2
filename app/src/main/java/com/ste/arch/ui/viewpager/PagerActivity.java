@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.ste.arch.R;
+import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
@@ -68,11 +69,6 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
         mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
-
-
-
-
-
         setSupportActionBar(mToolbar);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -103,7 +99,6 @@ public class PagerActivity extends DaggerAppCompatActivity {
                 FragmentVisibility fragment = (FragmentVisibility) mPagerAdapter.instantiateItem(mPager, position);
                 if (fragment != null) {
                     fragment.fragmentBecameVisible();
-
                 }
             }
 
@@ -118,6 +113,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
             @Override
             public void onClick(View view) {
                 repositoryViewModel.addIssueRecord(new IssueDataModel("url","url",0,"AAA INSERTED","A","2017-11-03T05:29:08Z","INSERTED","STE","url"));
+                repositoryViewModel.addContributorRecord(new ContributorDataModel("AAA INSERTED","STE"));
 
             }
         });
@@ -127,6 +123,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
             @Override
             public void onClick(View view) {
                 repositoryViewModel.updateIssueTitleRecord("AAA INSERTED","BBB UPDATED!");
+                repositoryViewModel.updateContributorRecord("AAA INSERTED","BBB UPDATED!");
 
             }
         });
@@ -166,6 +163,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
         utilityViewModel.getSnackBar().observe(this, snackMsg -> {
             handleSnackBar(snackMsg);
         });
+
 
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {

@@ -12,4 +12,8 @@ public interface ContributorRepository {
     LiveData<Resource<List<ContributorDataModel>>> getContributors(String owner, String repo, Boolean forceremote);
 
     LiveData<Resource<ContributorDataModel>> getWrappedIssueObject(LiveData<ContributorDataModel> obj);
+
+    void addContributorRecord(ContributorDataModel contributorDataModel);
+
+    void updateContributorTitleRecord(String titleold, String titlenew);
 }

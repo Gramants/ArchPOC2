@@ -275,6 +275,10 @@ public class RepositoryViewModel extends ViewModel {
         mIssueRepository.addIssueRecord(issueDataModel);
     }
 
+    public void addContributorRecord(ContributorDataModel contributorDataModel) {
+        mContributorRepository.addContributorRecord(contributorDataModel);
+    }
+
     // update record
 
     public void updateIssueTitleRecord(String titleold, String titlenew) {
@@ -282,6 +286,9 @@ public class RepositoryViewModel extends ViewModel {
 
     }
 
+    public void updateContributorRecord(String titleold, String titlenew) {
+        mContributorRepository.updateContributorTitleRecord(titleold,titlenew);
+    }
 
 
 
@@ -350,7 +357,6 @@ public class RepositoryViewModel extends ViewModel {
     public void getResultsFromDatabase() {
         setQueryString(null,null,false);
     }
-
 
 
 }
