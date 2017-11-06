@@ -1,9 +1,9 @@
 package com.ste.arch.ui.viewpager.vm;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+
 import android.arch.lifecycle.ViewModel;
 
+import com.ste.arch.SingleLiveEvent;
 import com.ste.arch.repositories.api.checknetwork.CheckNetwork;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
@@ -12,19 +12,18 @@ import javax.inject.Inject;
 
 public class UtilityViewModel extends ViewModel {
 
-    private MutableLiveData<Boolean> liveDataShowProgressInObserverFragments;
-    private MutableLiveData<String> livedatasavedstring;
-    private MutableLiveData<String> livedatasnackbar;
+
+    private SingleLiveEvent<String> livedatasavedstring;
+    private SingleLiveEvent<String> livedatasnackbar;
+    private SingleLiveEvent<Boolean> liveDataIsInternetConnected;
 
 
-    private MutableLiveData<Boolean> liveDataIsInternetConnected;
 
     public void init()
     {
-        liveDataShowProgressInObserverFragments = new MutableLiveData<>();
-        livedatasavedstring = new MutableLiveData<>();
-        livedatasnackbar = new MutableLiveData<>();
-        liveDataIsInternetConnected = new MutableLiveData<>();
+        livedatasavedstring = new SingleLiveEvent<>();
+        livedatasnackbar = new SingleLiveEvent<>();
+        liveDataIsInternetConnected = new SingleLiveEvent<>();
     }
 
 
@@ -39,13 +38,30 @@ public class UtilityViewModel extends ViewModel {
 
 
 
-    public LiveData<String> getSearchString() {
+
+    public void setObservableNetworkStatus() {
+        liveDataIsInternetConnected.setValue(mCheckNetwork.isConnectedToInternet());
+    }
+
+    public SingleLiveEvent<Boolean> getObservableNetworkStatus() {
+        return liveDataIsInternetConnected;
+    }
+
+
+
+
+    public  SingleLiveEvent<String> getObservableSavedSearchString() {
         livedatasavedstring.setValue(mPersistentStorageProxy.getSearchString());
         return livedatasavedstring;
     }
 
+    public  void setSavedSearchString(String searchstring) {
+        mPersistentStorageProxy.setSearchString(searchstring);
+    }
 
-    public MutableLiveData<String> getSnackBar() {
+
+
+    public SingleLiveEvent<String> getSnackBar() {
         return livedatasnackbar;
     }
 
@@ -54,15 +70,6 @@ public class UtilityViewModel extends ViewModel {
     }
 
 
-
-
-    public void askNetworkStatus() {
-        liveDataIsInternetConnected.setValue(mCheckNetwork.isConnectedToInternet());
-    }
-
-    public MutableLiveData<Boolean> isInternetConnected() {
-        return liveDataIsInternetConnected;
-    }
 
 
 }

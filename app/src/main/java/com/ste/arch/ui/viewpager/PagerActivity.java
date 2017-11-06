@@ -50,6 +50,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
     private SearchView mSearchView;
     private Toolbar mToolbar;
     private String mSearchString;
+
     private CharSequence titles[]= {"Fragment A","Fragment B","Dummy", "Dummy", "Dummy", "Dummy","Fragment B", "Dummy","Dummy", "Dummy", "Dummy","Fragment C"};
     private FloatingActionButton mAddRecord;
     private FloatingActionButton mUpdateRecord;
@@ -67,6 +68,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
         mAddRecord = findViewById(R.id.fab1);
         mUpdateRecord= findViewById(R.id.fab2);
 
+
         mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         setSupportActionBar(mToolbar);
@@ -75,7 +77,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String repo) {
                 mSearchString = repo;
-                utilityViewModel.askNetworkStatus();
+                utilityViewModel.setObservableNetworkStatus();
                 return false;
             }
 
@@ -129,10 +131,6 @@ public class PagerActivity extends DaggerAppCompatActivity {
         });
 
 
-
-
-
-
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
@@ -141,7 +139,7 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
     private void observeEvents() {
 
-        utilityViewModel.isInternetConnected().observe(this, isInternetConnected -> {
+        utilityViewModel.getObservableNetworkStatus().observe(this, isInternetConnected -> {
 
             if ( (isInternetConnected) && (!TextUtils.isEmpty(mSearchString)) )
             {
@@ -160,10 +158,6 @@ public class PagerActivity extends DaggerAppCompatActivity {
             handleSnackBar(snackMsg);
         });
 
-        utilityViewModel.getSnackBar().observe(this, snackMsg -> {
-            handleSnackBar(snackMsg);
-        });
-
 
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
@@ -176,6 +170,16 @@ public class PagerActivity extends DaggerAppCompatActivity {
                     Log.e("STEFANO","network call saved contributor list by activity in Room");
                 }
         );
+
+
+        utilityViewModel.getObservableSavedSearchString().observe(this, searchString -> {
+            mSearchView.setIconified(false);
+            mSearchView.setQuery(new String(searchString), false);
+
+        });
+
+
+
     }
 
 
@@ -258,8 +262,8 @@ public class PagerActivity extends DaggerAppCompatActivity {
         if (mSearchString.length() > 0) {
             String[] query = mSearchString.split("/");
             if (query.length == 2) {
-                //utilityViewModel.setShowProgressInObserverFragments();
                 repositoryViewModel.setQueryString(query[0], query[1], true);
+                utilityViewModel.setSavedSearchString(query[0]+"/"+query[1]);
             } else {
                 handleSnackBar("Error wrong format of input. Required format owner/repository_name");
             }
