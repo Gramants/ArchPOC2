@@ -182,8 +182,7 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
             public void onClick(View v)
             {
                 pagerAgentViewModel.sendMessageToA("Got Hello from C!");
-                pagerAgentViewModel.sendMessageToB("Got Hello from C!");
-                //pagerAgentViewModel.sendMessageToC("Hello C from C");
+                pagerAgentViewModel.sendMessageToDummy("Got Hello from C!");
             }
         });
 

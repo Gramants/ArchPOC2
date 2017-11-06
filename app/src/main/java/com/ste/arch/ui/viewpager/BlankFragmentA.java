@@ -148,19 +148,14 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
                 new RecyclerItemClickListener(getActivity(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-
-
                         repositoryViewModel.setIssueByUi((IssueDataModel) cache.get(position));
-                        //businessViewModel.setValueIssueContent((IssueDataModel) cache.get(position));
                         utilityViewModel.setSnackBar("Item passed to Fragment B using a cached List object (not DB)");
                     }
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-
                         repositoryViewModel.setRecordIdToStream(((IssueDataModel) cache.get(position)).getId());
                         utilityViewModel.setSnackBar("Item passed to Fragment B selecting the DB record");
-
                     }
                 })
         );
@@ -185,7 +180,7 @@ public class BlankFragmentA extends DaggerFragment implements FragmentVisibility
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pagerAgentViewModel.sendMessageToB("Got Hello from A!");
+                pagerAgentViewModel.sendMessageToDummy("Got Hello from A!");
                 pagerAgentViewModel.sendMessageToC("Got Hello from A!");
             }
         });
