@@ -24,10 +24,10 @@ public class DataTranslator {
         return transformed;
     }
 
-    public static ArrayList<ContributorDataModel> ContributorTranslator(Response<List<Contributor>> response) {
+    public static ArrayList<ContributorDataModel> ContributorTranslator(List<Contributor> response) {
         ArrayList<ContributorDataModel> transformed = new ArrayList();
-            for (Contributor listitem : response.body()) {
-                transformed.add(new ContributorDataModel(listitem.getId(), listitem.getLogin(), listitem.getHtml_url()));
+            for (Contributor listitem : response) {
+                transformed.add(new ContributorDataModel(listitem.getLogin(), listitem.getHtml_url()));
             }
         return transformed;
     }

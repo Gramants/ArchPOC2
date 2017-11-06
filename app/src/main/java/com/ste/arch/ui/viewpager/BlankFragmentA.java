@@ -33,11 +33,6 @@ import dagger.android.support.DaggerFragment;
 import javax.inject.Inject;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BlankFragmentA#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class BlankFragmentA extends DaggerFragment implements FragmentVisibility {
 
   @Inject

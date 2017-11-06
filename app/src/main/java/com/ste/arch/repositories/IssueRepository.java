@@ -29,9 +29,5 @@ public interface IssueRepository {
 
 
 
-    // used only by contributors now but to delete
-    LiveData<NetworkErrorObject> getNetworkError();
-
-
 
 }

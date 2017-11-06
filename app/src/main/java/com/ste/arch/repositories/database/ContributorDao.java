@@ -5,29 +5,31 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 
 import com.ste.arch.entities.ContributorDataModel;
+import com.ste.arch.entities.IssueDataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 
 @Dao
-public interface ContributorDao {
+public abstract class ContributorDao {
 
   @Query("SELECT * FROM Contributors")
-  LiveData<List<ContributorDataModel>> getAllContributors();
-
-  @Query("SELECT * FROM Contributors where id = :id")
-  LiveData<ContributorDataModel> getContributorById(int id);
+  public abstract LiveData<List<ContributorDataModel>> getAllContributors();
 
   @Query("DELETE FROM Contributors")
-  void deleteAll();
-
-  @Query("DELETE FROM Contributors where  id = :id")
-  void deleteById(int id);
+  public abstract void deleteAll();
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(List<ContributorDataModel> contributor);
+  public abstract void insert(List<ContributorDataModel> contributor);
 
+  @Transaction
+  public void updateData(List<ContributorDataModel> contributor) {
+    deleteAll();
+    insert(contributor);
+  }
 }

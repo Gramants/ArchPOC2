@@ -67,46 +67,17 @@ public class IssueRepositoryImpl implements IssueRepository {
 
             @Override
             protected void deleteAll(List<Issue> item) {
-                /*
-                not used because invoked a Transaction instead
-                if (!item.isEmpty()) {
-                    db.beginTransaction();
-                    try {
-                        issueDao.deleteAll();
-                        db.setTransactionSuccessful();
-                    } finally {
-                        db.endTransaction();
-                    }
 
-
-                }
-                */
             }
 
             @Override
             protected void saveCallResult(List<Issue> item) {
-                /*
-                 not used because invoked a Transaction instead
-                if (!item.isEmpty())
-                {
-                    db.beginTransaction();
-                    try {
-                        issueDao.insert(DataTranslator.IssueTranslator(item));
-                        db.setTransactionSuccessful();
-                    } finally {
-                        db.endTransaction();
-                    }
 
-
-                }
-                */
             }
 
             @Override
             protected Boolean shouldFetch(@Nullable List<IssueDataModel> data) {
-                //
                 return forceRemote;
-
             }
 
             @NonNull
@@ -206,13 +177,6 @@ public class IssueRepositoryImpl implements IssueRepository {
     }
 
 
-    @Override
-    public LiveData<NetworkErrorObject> getNetworkError() {
-        return null;
-    }
-
-
-
 
     @Override
     public LiveData<Resource<IssueDataModel>> getIssueRecordById(int id) {
@@ -221,8 +185,6 @@ public class IssueRepositoryImpl implements IssueRepository {
             @NonNull
             @Override
             protected LiveData<IssueDataModel> selectRecordById() {
-                Log.e("STEFANO", "inside the fun record selected " + String.valueOf(id));
-
 
                 return Transformations.map(issueDao.getIssueById(id), new Function<IssueDataModel, IssueDataModel>() {
                     @Override

@@ -34,8 +34,8 @@ public class AppRepositoryModule {
 
     @Provides
     @Singleton
-    public ContributorRepositoryImpl provideContributorRepositoryImpl(ContributorDao contributorDao, ProjectDb projectdb, GithubApiService mApiService) {
-        return new ContributorRepositoryImpl(contributorDao, projectdb, mApiService);
+    public ContributorRepositoryImpl provideContributorRepositoryImpl( ProjectDb projectdb, ContributorDao contributorDao,GithubApiService mApiService) {
+        return new ContributorRepositoryImpl(projectdb,contributorDao, mApiService);
     }
 
     @Provides

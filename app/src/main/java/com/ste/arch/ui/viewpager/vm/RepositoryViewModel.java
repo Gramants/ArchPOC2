@@ -28,7 +28,7 @@ import io.reactivex.annotations.Nullable;
 public class RepositoryViewModel extends ViewModel {
 
 
-    private MediatorLiveData<List<ContributorDataModel>> mApiContributorResponse;
+    //private MediatorLiveData<List<ContributorDataModel>> mApiContributorResponse;
 
 
 
@@ -37,7 +37,7 @@ public class RepositoryViewModel extends ViewModel {
 
     private MutableLiveData<Integer> mSelectedId;
     private MutableLiveData<IssueDataModel> mSelectedIssue;
-
+    private MutableLiveData<ContributorDataModel> mSelectedContributor;
 
 
     private LiveData<String> mResultMessageSnackbar;
@@ -48,15 +48,22 @@ public class RepositoryViewModel extends ViewModel {
     private ContributorRepository mContributorRepository;
     private PersistentStorageProxy mPersistentStorageProxy;
 
+
+// ISSUE
 //issue list streamer
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
 //issue item object streamers
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
-
 // stream container of issue object from ui or from db
     private MediatorLiveData<Resource<IssueDataModel>> mIssueResultItemMixer;
-    
+
+
+// CONTRIBUTOR
+//contributor list streamer
+    private LiveData<Resource<List<ContributorDataModel>>> mResultContributorListDataModel;
+
+
 
     @Inject
     public RepositoryViewModel(IssueRepository mIssueRepository, ContributorRepository mContributorRepository, PersistentStorageProxy mPersistentStorageProxy) {
@@ -73,46 +80,33 @@ public class RepositoryViewModel extends ViewModel {
         // invoked only by the factory of the container Activity
 
 
-        mApiContributorResponse = new MediatorLiveData<>();
-
-
-
 
         // UI click and message events
         mQueryStringObject = new MutableLiveData<>();
 
         mMessageSnackbar = new MutableLiveData<>();
 
+
+
+
+// ISSUE
         mSelectedId = new MutableLiveData<>();
-
         mSelectedIssue = new MutableLiveData<>();
-
-
-
         // init issue List and Item observable
         mResultIssueListDataModel=new MutableLiveData<>();
-
         // init issue Item  and Id item
         mResultIssueItemDataModel=new MutableLiveData<>();
-
-
         mIssueResultItemMixer = new MediatorLiveData<>();
+
+// CONTRIBUTOR
+        mResultContributorListDataModel=new MutableLiveData<>();
+        mSelectedContributor = new MutableLiveData<>();
 
 
 
         //Load async issues   //STEP2-a
         mResultIssueListDataModel= Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
-        });
-
-        //Load async contributors  //STEP2-b
-        mResultContributorDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
-            return loadContributor(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
-        });
-
-        //send msg to snackbar   //STEP2-c
-        mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
-            return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
         });
 
         //select a record by id stream on click
@@ -127,15 +121,15 @@ public class RepositoryViewModel extends ViewModel {
 
 
 
-
-        // mix in one stream the 2 source to be catched by fragment B
+        // ISSUE mix in one stream the 2 source to be catched by fragment B
+        // 1
         Observer<Resource<IssueDataModel>> issueByObject = new Observer<Resource<IssueDataModel>>() {
             @Override
             public void onChanged(@Nullable Resource<IssueDataModel> s) {
-                    mIssueResultItemMixer.setValue(mResultIssueItemDataModelByObject.getValue());
+                mIssueResultItemMixer.setValue(mResultIssueItemDataModelByObject.getValue());
             }
         };
-
+        //2
         Observer<Resource<IssueDataModel>> issueByDB = new Observer<Resource<IssueDataModel>>() {
             @Override
             public void onChanged(@Nullable Resource<IssueDataModel> s) {
@@ -148,10 +142,46 @@ public class RepositoryViewModel extends ViewModel {
         mIssueResultItemMixer.addSource(mResultIssueItemDataModel,issueByDB);
 
 
+
+
+
+
+
+        // LOAD CONTRIBUTOTS
+
+        //Load async contributors  //STEP2-b
+        mResultContributorListDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return loadContributors(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
+        });
+
+
+
+
+
+
+        //send msg to snackbar   //STEP2-c
+        mResultMessageSnackbar = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return mQueryStringObject.getForceremote() == false ? null : loadSnackBar("Search string: " + mQueryStringObject.getUser() + "/" + mQueryStringObject.getRepo());
+        });
+
+
+
+
+
+    }
+
+
+    // the observable is a mix of the 2 possibilities
+    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
+        return mIssueResultItemMixer;
     }
 
 
 
+
+
+
+    // UI insert the search string
 
     //STEP1
     // the initial query string fires 3 transformed stream Load async issues,Load async contributors and send msg to snackbar
@@ -167,6 +197,11 @@ public class RepositoryViewModel extends ViewModel {
     public LiveData<Resource<List<IssueDataModel>>> loadIssues(String user, String repo, Boolean forceremote) {
         return mIssueRepository.getIssues(user, repo, forceremote);
     }
+    //Load async contributors read the issues stream from db or from network passing vars from the object wrapping the search string
+//STEP3.1
+    public LiveData<Resource<List<ContributorDataModel>>> loadContributors(String user, String repo, Boolean forceremote) {
+        return mContributorRepository.getContributors(user, repo, forceremote);
+    }
 
 
 // async issues observable, observed by UI
@@ -176,6 +211,12 @@ public class RepositoryViewModel extends ViewModel {
     public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponse() {
         return mResultIssueListDataModel;
     }
+    @NonNull
+    public LiveData<Resource<List<ContributorDataModel>>> getApiContributorResponse() {
+        return mResultContributorListDataModel;
+    }
+
+
 
 
 // -----------  DELETE ISSUE RECORD
@@ -184,7 +225,6 @@ public class RepositoryViewModel extends ViewModel {
     public void deleteIssueRecordById(Integer id) {
         mIssueRepository.deleteIssueById(id);
     }
-
 
 
 // -----------  SELECT and stream the Issue record by ID
@@ -203,19 +243,11 @@ public class RepositoryViewModel extends ViewModel {
         return mIssueRepository.getIssueRecordById(id);
     }
 
-    /*
-    @NonNull
-    public LiveData<Resource<IssueDataModel>> getRecordFromDb() {
-        // observable of the stream to be observed by the fragment
-        return mResultIssueItemDataModel;
-    }
-*/
 
 
-// the observable is a mix of the 2 possibilities
-    public LiveData<Resource<IssueDataModel>> getMixedDetailResult() {
-        return mIssueResultItemMixer;
-    }
+
+
+
 
 
 
@@ -234,16 +266,13 @@ public class RepositoryViewModel extends ViewModel {
     }
 
 
+
+
+
 // set from UI the object ISSue from UI cached list, fire the chain reaction and set the observable
 
     public void setIssueByUi(IssueDataModel issuebyui) {
         mSelectedIssue.setValue(issuebyui);
-    }
-
-    @NonNull
-    public LiveData<Resource<IssueDataModel>> getIssueItemDataModelByObject() {
-        // observable of the stream to be observed by the fragment
-        return mResultIssueItemDataModelByObject;
     }
 
    // transformed stream from the chain reaction
@@ -253,73 +282,30 @@ public class RepositoryViewModel extends ViewModel {
         return mIssueRepository.getWrappedIssueObject(mSelectedIssue);
     }
 
+// set from UI the object Contributor from UI cached list, fire the chain reaction and set the observable
 
-    //LiveData<Resource<IssueDataModel>> y = Transformations.switchMap(trigger, trigger.);
-
-
-
-
-/*
-    public LiveData<Resource<IssueDataModel>> setMixedDetailResult(LiveData<Resource<IssueDataModel>> obj1, LiveData<Resource<IssueDataModel>> obj2) {
-//https://plus.google.com/+MichielPijnackerHordijk/posts/QGXF9gRomVi
-        return  Transformations.switchMap(trigger, trigger -> {
-            return null;
-        });
-
-        return new MixResource<Resource<IssueDataModel>,Resource<IssueDataModel>>() {
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<IssueDataModel>> getUiData() {
-                return obj1;
-            }
-
-            @NonNull
-            @Override
-            protected LiveData<Resource<IssueDataModel>> getDbData() {
-                return obj2;
-            }
-        }.getAsLiveData();
-
-
-
+    public void setContributorByUi(ContributorDataModel contributorbyui) {
+        mSelectedContributor.setValue(contributorbyui);
     }
 
-*/
-
-
-
-
-
-// set the stream from db at the startup or fron network the contributors
-
-    public LiveData<List<ContributorDataModel>> loadContributor(@NonNull String user, String repo, Boolean forceremote) {
-        mApiContributorResponse.addSource(
-                mContributorRepository.getContributors(user, repo, forceremote),
-                apiContributorResponse -> mApiContributorResponse.setValue(apiContributorResponse)
-        );
-        return mApiContributorResponse;
-    }
-
-
-    // get the stream  from the observables of issues and contributors wrapped in mutablelivedata
+    // transformed stream from the chain reaction
     @NonNull
-    public LiveData<List<ContributorDataModel>> getApiContributorResponse() {
-        return mResultContributorDataModel;
+    public LiveData<Resource<ContributorDataModel>> setContributorByObject(ContributorDataModel obj) {
+        // stream of the actual data coming from the transformation fired by the item click on the UI
+        return mContributorRepository.getWrappedIssueObject(mSelectedContributor);
     }
 
 
-    // delete a record from the db by pk
 
 
-    // catch the error network object from the network call of issues and contributors
-    public LiveData<NetworkErrorObject> getIssueNetworkErrorResponse() {
-        return mIssueRepository.getNetworkError();
-    }
 
-    public LiveData<NetworkErrorObject> getContributorNetworkErrorResponse() {
-        return mContributorRepository.getNetworkError();
-    }
+
+
+
+
+
+
+
 
 
     // saving the good query string to sharedpref
@@ -336,13 +322,12 @@ public class RepositoryViewModel extends ViewModel {
         return mMessageSnackbar;
     }
 
-
-
     public LiveData<String> getSnackBar() {
         return mResultMessageSnackbar;
     }
 
 
+    // call the starting select from db
     public void getResultsFromDatabase() {
         setQueryString(null,null,false);
     }

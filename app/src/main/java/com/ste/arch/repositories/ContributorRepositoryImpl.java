@@ -4,14 +4,24 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ste.arch.Config;
 import com.ste.arch.Utils;
 import com.ste.arch.entities.ContributorDataModel;
+import com.ste.arch.entities.ContributorDataModel;
+import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.pojos.Contributor;
+import com.ste.arch.entities.pojos.Contributor;
+import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
+import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
+import com.ste.arch.repositories.asyncoperations.Resource;
+import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.database.ContributorDao;
+import com.ste.arch.repositories.database.IssueDao;
 import com.ste.arch.repositories.database.ProjectDb;
 import com.ste.arch.repositories.asyncoperations.ContributorDbManager;
 
@@ -31,77 +41,86 @@ import static com.ste.arch.entities.translator.DataTranslator.ContributorTransla
 
 public class ContributorRepositoryImpl implements ContributorRepository {
 
+
     private ContributorDao contributorDao;
     private GithubApiService mApiService;
-    private ProjectDb mProjectDb;
-    private MutableLiveData<NetworkErrorObject> liveDataError = new MutableLiveData<>();
+    private ProjectDb db;
+
     @Inject
-    public ContributorRepositoryImpl(ContributorDao contributorDao, ProjectDb mProjectDb, GithubApiService mApiService) {
+    public ContributorRepositoryImpl(ProjectDb mDb, ContributorDao contributorDao, GithubApiService mApiService) {
         this.contributorDao = contributorDao;
         this.mApiService = mApiService;
-        this.mProjectDb = mProjectDb;
+        this.db = mDb;
     }
 
 
-    public LiveData<List<ContributorDataModel>> getContributors(String owner, String repo, Boolean forceRemote) {
-        final MutableLiveData<List<ContributorDataModel>> liveDataResult = new MutableLiveData<>();
-
-        if (forceRemote)
-        {
-        Call<List<Contributor>> call = mApiService.getContributors(owner, repo);
-        call.enqueue(new Callback<List<Contributor>>() {
+    public LiveData<Resource<List<ContributorDataModel>>> getContributors(String owner, String repo, Boolean forceRemote) {
+        return new NetworkBoundResource<List<ContributorDataModel>, List<Contributor>>() {
             @Override
-            public void onResponse(Call<List<Contributor>> call, Response<List<Contributor>> response) {
+            protected void updateAll(List<Contributor> item) {
+                if (!item.isEmpty()) {
+                    db.beginTransaction();
+                    try {
+                        contributorDao.updateData(DataTranslator.ContributorTranslator(item));
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
 
-                if (response.isSuccessful()) {
-                    deleteTableAndSaveDataToLocal(ContributorTranslator(response));
+
                 }
-                else
-                {
-                    liveDataError.setValue(new NetworkErrorObject(response.code(),response.message() , Config.CONTRIBUTOR_ENDPOINT));
-                }
+            }
+
+            @Override
+            protected void deleteAll(List<Contributor> item) {
 
             }
 
             @Override
-            public void onFailure(Call<List<Contributor>> call, Throwable t) {
-                liveDataError.setValue(new NetworkErrorObject(0,"Unknown error",Config.CONTRIBUTOR_ENDPOINT));
+            protected void saveCallResult(List<Contributor> item) {
+
             }
-        });
 
+            @Override
+            protected Boolean shouldFetch(@Nullable List<ContributorDataModel> data) {
+                return forceRemote;
+            }
 
+            @NonNull
+            @Override
+            protected LiveData<List<ContributorDataModel>> loadFromDb() {
+                // apply Transformation to order the results
+                return
+                        Transformations.switchMap(contributorDao.getAllContributors(),
+                                new Function<List<ContributorDataModel>, LiveData<List<ContributorDataModel>>>() {
+                                    @Override
+                                    public LiveData<List<ContributorDataModel>> apply(List<ContributorDataModel> contributorDataModels) {
 
-
-            return liveDataResult;
-        }
-        else
-        {
-            // transform the livedata result coming from the DB, change a field and order
-
-            LiveData<List<ContributorDataModel>> transformedDbOutput=
-                    Transformations.switchMap(contributorDao.getAllContributors(),
-                            new Function<List<ContributorDataModel>, LiveData<List<ContributorDataModel>>>() {
-                                @Override
-                                public LiveData<List<ContributorDataModel>> apply(List<ContributorDataModel> contributorDataModels) {
-
-                                    ArrayList<ContributorDataModel> result=new ArrayList<>();
-                                    for (ContributorDataModel customer : contributorDataModels) {
-                                        customer.setLogin(customer.getLogin().trim().toUpperCase()+" transf. by switchmap");
-                                        result.add(customer);
+                                        ArrayList<ContributorDataModel> result = new ArrayList<>();
+                                        for (ContributorDataModel contributor : contributorDataModels) {
+                                            contributor.setLogin(contributor.getLogin().trim().toUpperCase() + " (Transf & ORDERED)");
+                                            result.add(contributor);
+                                        }
+                                        Collections.sort(result, new Utils.CustomComparator());
+                                        return getTransformedDbResult(result);
                                     }
-
-                                  Collections.sort(result, new Utils.CustomComparator());
-                                  return getTransformedDbResult(result);
-                                }
-                            });
+                                });
 
 
+            }
 
-            return transformedDbOutput;
-
-        }
-
+            @NonNull
+            @Override
+            protected Call<List<Contributor>> createCall() {
+                return mApiService.getContributors(owner, repo);
+            }
+        }.getAsLiveData();
     }
+    
+
+
+
+   
 
     private LiveData<List<ContributorDataModel>> getTransformedDbResult(List<ContributorDataModel> result) {
         return new LiveData<List<ContributorDataModel>>() {
@@ -113,20 +132,15 @@ public class ContributorRepositoryImpl implements ContributorRepository {
     }
 
 
-
-
     @Override
-    public LiveData<ContributorDataModel> getContributorFromDb(int id) {
-        return contributorDao.getContributorById(id);
+    public LiveData<Resource<ContributorDataModel>> getWrappedIssueObject(LiveData<ContributorDataModel> obj) {
+        return new SelectObject<ContributorDataModel>() {
+
+            @NonNull
+            @Override
+            protected LiveData<ContributorDataModel> getObject() {
+                return obj;
+            }
+        }.getAsLiveData();
     }
-
-
-    private void deleteTableAndSaveDataToLocal(ArrayList<ContributorDataModel> contributors) {
-        new ContributorDbManager.AddContributorsAsyncTask(mProjectDb).execute(contributors);
-    }
-
-
-    @Override
-    public LiveData<NetworkErrorObject> getNetworkError() {return liveDataError;}
-
 }

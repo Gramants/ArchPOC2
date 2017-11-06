@@ -22,6 +22,8 @@ import com.ste.arch.adapters.ContributorDataAdapter;
 import com.ste.arch.adapters.RecyclerItemClickListener;
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.ContributorTransformed;
+import com.ste.arch.entities.IssueDataModel;
+import com.ste.arch.repositories.asyncoperations.Status;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
@@ -80,7 +82,6 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
     @Override
     public void onViewCreated(View view,Bundle save) {
         super.onViewCreated(view,save);
-        Log.e("STEFANO","onviewcreated C");
 
         //setup the listener for the fragment C
         Observer<String> observer = msg -> textView.setText(msg);
@@ -90,27 +91,45 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
         repositoryViewModel.getApiContributorResponse().observe(this,
                 apiResponse -> {
 
-                    if (apiResponse.size()>0)
+                    if (apiResponse.status== Status.ERROR)
                     {
-                        cache=apiResponse;
-                        textView2.setText("Contributors found:"+String.valueOf(apiResponse.size()) );
-                        textView3.setText("No error");
+                        textView3.setText("Error in last query, reason: "+apiResponse.message);
                         mProgress.setVisibility(View.INVISIBLE);
-                        mAdapter.clearContributors();
-                        mAdapter.addContributors(apiResponse);
                     }
+                    else if (apiResponse.status.equals(Status.SUCCESS) )
+                    {
+                        textView3.setText("Network call successful for Issues endpoint");
+                        mProgress.setVisibility(View.INVISIBLE);
+                    }
+                    else if (apiResponse.status.equals(Status.LOADING) )
+                    {
+                        mProgress.setVisibility(View.VISIBLE);
+                        textView3.setText("Loading Issues from network");
+                    }
+                    else if (apiResponse.status.equals(Status.SUCCESSFROMDB) )
+                    {
+                        textView3.setText("Issue loaded from Room");
+                        mProgress.setVisibility(View.INVISIBLE);
+                    }
+
+
+
+                    if (apiResponse.data!=null)
+                    {
+                        cache=apiResponse.data;
+                        textView2.setText("Issues found:"+String.valueOf(apiResponse.data.size()) );
+                        mAdapter.clearContributors();
+                        mAdapter.addContributors(apiResponse.data);
+
+                    }
+
+
                 }
         );
 
 
-        utilityViewModel.getShowDialogIssueAndContributor().observe(this, showDialog -> {
-            mProgress.setVisibility(showDialog ? View.VISIBLE : View.INVISIBLE);
-        });
 
-         repositoryViewModel.getContributorNetworkErrorResponse().observe(this, networkError -> {
-          textView3.setText("No contributor found from Network call");
-          mProgress.setVisibility(View.INVISIBLE);
-        });
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -144,7 +163,8 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
                 new RecyclerItemClickListener(getActivity(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                       businessViewModel.setValueContributorContent(new ContributorTransformed( ((ContributorDataModel) cache.get(position)).getLogin()+" translated"));
+                        
+                       repositoryViewModel.setContributorByUi((ContributorDataModel) cache.get(position));
                        utilityViewModel.setSnackBar("Contributor name added to Detail tab");
                     }
 

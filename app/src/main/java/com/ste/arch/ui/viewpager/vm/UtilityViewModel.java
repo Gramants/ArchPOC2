@@ -54,13 +54,6 @@ public class UtilityViewModel extends ViewModel {
     }
 
 
-    public MutableLiveData<Boolean> getShowDialogIssueAndContributor() {
-        return liveDataShowProgressInObserverFragments;
-    }
-
-    public void setShowProgressInObserverFragments() {
-        liveDataShowProgressInObserverFragments.setValue(true);
-    }
 
 
     public void askNetworkStatus() {

@@ -13,7 +13,7 @@ import com.ste.arch.Config;
 @Entity(tableName = Config.CONTRIBUTORS_TABLE_NAME)
 public class ContributorDataModel {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
     @ColumnInfo(name = "login")
@@ -47,9 +47,8 @@ public class ContributorDataModel {
     }
 
 
-    public ContributorDataModel(int id, String login, String html_url) {
+    public ContributorDataModel(String login, String html_url) {
 
-        this.id = id;
         this.login = login;
         this.html_url = html_url;
     }
