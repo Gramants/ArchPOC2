@@ -8,16 +8,12 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
-import com.ste.arch.Config;
-import com.ste.arch.entities.NetworkErrorObject;
+import com.ste.arch.repositories.Resource;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.ste.arch.entities.translator.DataTranslator.ContributorTranslator;
 
 public abstract class NetworkBoundResource<ResultType, RequestType> {
     private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();

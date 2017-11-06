@@ -41,43 +41,6 @@ public class BusinessViewModel extends ViewModel {
 
 
 
-    // streaming  the item object clicking on the UI not loading it from the database
-
-    public LiveData<IssueDataModel> getIssueContent() {
-        return Transformations.map(liveDataShowIssueContent, new Function<IssueDataModel, IssueDataModel>() {
-            @Override
-            public IssueDataModel apply(IssueDataModel input) {
-                IssueDataModel temp=input;
-                input.setTitle(temp.getTitle()+" (Not from DB)");
-                return temp;
-            }
-        });
-
-    }
-
-    public void setValueIssueContent(IssueDataModel issueDataModel) {
-        liveDataShowIssueContent.setValue(issueDataModel);
-    }
-
-
-
-
-
-
-
-
-
-
-
-    public LiveData<ContributorTransformed> getContributorContent() {
-        return liveDataShowContributorContent;
-    }
-
-    public void setValueContributorContent(ContributorTransformed contributorDataModel) {
-        liveDataShowContributorContent.setValue(contributorDataModel);
-    }
-
-
 
 
 

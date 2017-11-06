@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.ste.arch.databinding.FragmentDetailBinding;
 import com.ste.arch.entities.ContributorTransformed;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.repositories.asyncoperations.Status;
+import com.ste.arch.repositories.Status;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;

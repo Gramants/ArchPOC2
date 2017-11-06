@@ -2,20 +2,16 @@ package com.ste.arch.repositories;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.ste.arch.Utils;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.AddRecord;
-import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.asyncoperations.SelectRecord;
 import com.ste.arch.repositories.asyncoperations.UpdateRecord;
@@ -193,7 +189,7 @@ public class IssueRepositoryImpl implements IssueRepository {
                         if (temp!=null)
                         {
                             // in case I have deleted the record that is shown already in the fragment
-                            input.setTitle(temp.getTitle() + " (MAP transformed and FROM DB)");
+                            input.setTitle(temp.getTitle() + " (.map transformed Source: DB)");
                         }
                         return temp;
                     }
@@ -214,7 +210,23 @@ public class IssueRepositoryImpl implements IssueRepository {
             @NonNull
             @Override
             protected LiveData<IssueDataModel> getObject() {
-                return obj;
+
+                return Transformations.map(obj, new Function<IssueDataModel, IssueDataModel>() {
+                    @Override
+                    public IssueDataModel apply(IssueDataModel input) {
+                        IssueDataModel temp = input;
+                        if (temp!=null)
+                        {
+                            // in case I have deleted the record that is shown already in the fragment
+                            input.setTitle(temp.getTitle() + " (.map transformed Source: UI)");
+                        }
+                        return temp;
+                    }
+                });
+
+
+
+
             }
         }.getAsLiveData();
 

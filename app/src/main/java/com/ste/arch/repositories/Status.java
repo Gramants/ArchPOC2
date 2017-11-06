@@ -1,4 +1,4 @@
-package com.ste.arch.repositories.asyncoperations;
+package com.ste.arch.repositories;
 
 
 public enum Status {

@@ -10,11 +10,10 @@ import android.support.annotation.NonNull;
 
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.entities.NetworkErrorObject;
 import com.ste.arch.entities.QueryString;
 import com.ste.arch.repositories.ContributorRepository;
 import com.ste.arch.repositories.IssueRepository;
-import com.ste.arch.repositories.asyncoperations.Resource;
+import com.ste.arch.repositories.Resource;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 
 import java.util.List;

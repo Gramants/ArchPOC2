@@ -21,9 +21,7 @@ import com.ste.arch.R;
 import com.ste.arch.adapters.ContributorDataAdapter;
 import com.ste.arch.adapters.RecyclerItemClickListener;
 import com.ste.arch.entities.ContributorDataModel;
-import com.ste.arch.entities.ContributorTransformed;
-import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.repositories.asyncoperations.Status;
+import com.ste.arch.repositories.Status;
 import com.ste.arch.ui.viewpager.vm.BusinessViewModel;
 import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
 import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
@@ -98,17 +96,17 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
                     }
                     else if (apiResponse.status.equals(Status.SUCCESS) )
                     {
-                        textView3.setText("Network call successful for Issues endpoint");
+                        textView3.setText("Network call successful for Contributor endpoint");
                         mProgress.setVisibility(View.INVISIBLE);
                     }
                     else if (apiResponse.status.equals(Status.LOADING) )
                     {
                         mProgress.setVisibility(View.VISIBLE);
-                        textView3.setText("Loading Issues from network");
+                        textView3.setText("Loading Contributor from network");
                     }
                     else if (apiResponse.status.equals(Status.SUCCESSFROMDB) )
                     {
-                        textView3.setText("Issue loaded from Room");
+                        textView3.setText("Contributors loaded from Room");
                         mProgress.setVisibility(View.INVISIBLE);
                     }
 
@@ -117,7 +115,7 @@ public class BlankFragmentC extends DaggerFragment implements FragmentVisibility
                     if (apiResponse.data!=null)
                     {
                         cache=apiResponse.data;
-                        textView2.setText("Issues found:"+String.valueOf(apiResponse.data.size()) );
+                        textView2.setText("Contributors found:"+String.valueOf(apiResponse.data.size()) );
                         mAdapter.clearContributors();
                         mAdapter.addContributors(apiResponse.data);
 

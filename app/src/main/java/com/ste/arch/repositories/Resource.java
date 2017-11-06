@@ -1,10 +1,8 @@
-package com.ste.arch.repositories.asyncoperations;
+package com.ste.arch.repositories;
 
 
         import android.support.annotation.NonNull;
         import android.support.annotation.Nullable;
-
-        import com.ste.arch.entities.IssueDataModel;
 
 
 public class Resource<T> {

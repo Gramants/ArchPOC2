@@ -4,16 +4,11 @@ package com.ste.arch.repositories.asyncoperations;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
-import android.os.AsyncTask;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
-import android.util.Log;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.ste.arch.repositories.Resource;
 
 public abstract class SelectRecord<ResultType> {
     private final MediatorLiveData<Resource<ResultType>> distinctLiveData = new MediatorLiveData<>();

@@ -12,7 +12,6 @@ import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.NetworkBoundResource;
-import com.ste.arch.repositories.asyncoperations.Resource;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.database.ContributorDao;
 import com.ste.arch.repositories.database.ProjectDb;
