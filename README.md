@@ -1,1 +1,1 @@
-Full POC Architecture Component
+Full POC Architecture Components
