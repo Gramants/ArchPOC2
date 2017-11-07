@@ -1,8 +1,6 @@
 package com.ste.arch.di;
 
-import android.app.Application;
-
-import com.ste.arch.MyApplication;
+import com.ste.arch.App;
 
 import com.ste.arch.di.ui.UiBuilder;
 
@@ -16,8 +14,8 @@ import javax.inject.Singleton;
 
 @Singleton
 @Component(modules = {
-        //necessary modules
-        AndroidInjectionModule.class, AndroidSupportInjectionModule.class,
+        AndroidInjectionModule.class,
+        AndroidSupportInjectionModule.class,
         AppRepositoryModule.class,
         AppModule.class,
         ApiServiceModule.class,
@@ -27,13 +25,13 @@ import javax.inject.Singleton;
 
 public interface AppComponent {
 
-    void inject(MyApplication app);
+    void inject(App app);
 
     @Component.Builder
     interface Builder {
 
         @BindsInstance
-        Builder application(Application application);
+        Builder application(android.app.Application application);
 
         AppComponent build();
     }

@@ -4,7 +4,7 @@
   android:id="@+id/linearLayout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".ui.viewpager.BlankFragment">
+  tools:context=".ui.viewpager.DummyFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

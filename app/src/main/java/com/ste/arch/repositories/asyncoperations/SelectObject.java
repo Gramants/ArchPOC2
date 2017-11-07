@@ -21,6 +21,7 @@ public abstract class SelectObject<ResultType> {
         distinctLiveData.addSource(objectSource, new Observer<ResultType>() {
             private Boolean initialized = false;
             private ResultType lastObj = null;
+
             @Override
             public void onChanged(@Nullable ResultType obj) {
 
@@ -28,14 +29,10 @@ public abstract class SelectObject<ResultType> {
                     initialized = true;
                     lastObj = obj;
                     distinctLiveData.postValue(Resource.successfromui(lastObj));
-                }
-                else if ((obj == null && lastObj != null) || obj != lastObj) {
+                } else if ((obj == null && lastObj != null) || obj != lastObj) {
                     lastObj = obj;
                     distinctLiveData.postValue(Resource.successfromui(lastObj));
-                }
-
-                else
-                {
+                } else {
                     distinctLiveData.postValue(null);
                 }
 

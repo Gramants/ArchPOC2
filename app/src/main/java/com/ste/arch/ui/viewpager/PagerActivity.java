@@ -18,9 +18,9 @@ import android.widget.SearchView;
 import com.ste.arch.R;
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.IssueDataModel;
-import com.ste.arch.ui.viewpager.vm.PagerAgentViewModel;
-import com.ste.arch.ui.viewpager.vm.RepositoryViewModel;
-import com.ste.arch.ui.viewpager.vm.UtilityViewModel;
+import com.ste.arch.ui.viewpager.viewmodel.MessageRouterViewModel;
+import com.ste.arch.ui.viewpager.viewmodel.RepositoryViewModel;
+import com.ste.arch.ui.viewpager.viewmodel.UtilityViewModel;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public class PagerActivity extends DaggerAppCompatActivity {
 
     @Inject
-    PagerAgentViewModel pagerAgentViewModel;
+    MessageRouterViewModel messageRouterViewModel;
 
     @Inject
     RepositoryViewModel repositoryViewModel;
@@ -61,9 +61,9 @@ public class PagerActivity extends DaggerAppCompatActivity {
         mTablayout = findViewById(R.id.tablayout);
         mPager = findViewById(R.id.pager);
         mToolbar = findViewById(R.id.toolbar);
-        mAddRecord = findViewById(R.id.fab1);
-        mUpdateRecord = findViewById(R.id.fab2);
 
+        mUpdateRecord = findViewById(R.id.fab2);
+        mAddRecord = findViewById(R.id.fab1);
 
         mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
@@ -149,12 +149,12 @@ public class PagerActivity extends DaggerAppCompatActivity {
             handleSnackBar(snackMsg);
         });
 
+
         // force network download in activity and save in db for issues and contributors
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
                 }
         );
-
         repositoryViewModel.getApiContributorResponse().observe(this,
                 apiResponse -> {
                 }
@@ -199,29 +199,29 @@ public class PagerActivity extends DaggerAppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case FRAGMENT_0_POS:
-                    return BlankFragmentA.newInstance();  // A
+                    return FragmentA.newInstance();  // A
                 case FRAGMENT_1_POS:
-                    return BlankFragmentB.newInstance();  // B  still in fragmentmanager when in A
+                    return FragmentB.newInstance();  // B  still in fragmentmanager when in A
                 case FRAGMENT_2_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_3_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_4_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_5_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_6_POS:
-                    return BlankFragmentB.newInstance(); // B   not more in fragment manager when in A or B
+                    return FragmentB.newInstance(); // B   not more in fragment manager when in A or B
                 case FRAGMENT_7_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_8_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_9_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_10_POS:
-                    return BlankFragment.newInstance();
+                    return DummyFragment.newInstance();
                 case FRAGMENT_11_POS:
-                    return BlankFragmentC.newInstance();  // C
+                    return FragmentC.newInstance();  // C
                 default:
                     break;
             }

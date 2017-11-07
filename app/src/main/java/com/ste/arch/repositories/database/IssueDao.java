@@ -12,8 +12,6 @@ import com.ste.arch.entities.IssueDataModel;
 import java.util.List;
 
 
-
-
 @Dao
 public abstract class IssueDao {
   @Query("SELECT * FROM Issues")

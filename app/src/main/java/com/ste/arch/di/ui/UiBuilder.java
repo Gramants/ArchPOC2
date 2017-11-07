@@ -1,13 +1,13 @@
 package com.ste.arch.di.ui;
 
-import com.ste.arch.ui.viewpager.BlankFragment;
-import com.ste.arch.ui.viewpager.BlankFragmentA;
-import com.ste.arch.ui.viewpager.BlankFragmentAModule;
-import com.ste.arch.ui.viewpager.BlankFragmentB;
-import com.ste.arch.ui.viewpager.BlankFragmentBModule;
-import com.ste.arch.ui.viewpager.BlankFragmentC;
-import com.ste.arch.ui.viewpager.BlankFragmentCModule;
-import com.ste.arch.ui.viewpager.BlankFragmentModule;
+import com.ste.arch.ui.viewpager.DummyFragment;
+import com.ste.arch.ui.viewpager.FragmentA;
+import com.ste.arch.ui.viewpager.FragmentAModule;
+import com.ste.arch.ui.viewpager.FragmentB;
+import com.ste.arch.ui.viewpager.FragmentBModule;
+import com.ste.arch.ui.viewpager.FragmentC;
+import com.ste.arch.ui.viewpager.FragmentCModule;
+import com.ste.arch.ui.viewpager.DummyFragmentModule;
 import com.ste.arch.ui.viewpager.PagerActivity;
 import com.ste.arch.ui.viewpager.PagerActivityModule;
 import dagger.Module;
@@ -21,17 +21,17 @@ public abstract class UiBuilder {
   @ContributesAndroidInjector(modules = PagerActivityModule.class)
   abstract PagerActivity bindPagerActivity();
 
-  @ContributesAndroidInjector(modules = BlankFragmentAModule.class)
-  abstract BlankFragmentA bindBlankFragmentA();
+  @ContributesAndroidInjector(modules = FragmentAModule.class)
+  abstract FragmentA bindBlankFragmentA();
 
-  @ContributesAndroidInjector(modules = BlankFragmentBModule.class)
-  abstract BlankFragmentB bindBlankFragmentB();
+  @ContributesAndroidInjector(modules = FragmentBModule.class)
+  abstract FragmentB bindBlankFragmentB();
 
-  @ContributesAndroidInjector(modules = BlankFragmentCModule.class)
-  abstract BlankFragmentC bindBlankFragmentC();
+  @ContributesAndroidInjector(modules = FragmentCModule.class)
+  abstract FragmentC bindBlankFragmentC();
 
-  @ContributesAndroidInjector(modules = BlankFragmentModule.class)
-  abstract BlankFragment bindBlankFragment();
+  @ContributesAndroidInjector(modules = DummyFragmentModule.class)
+  abstract DummyFragment bindBlankFragment();
 
 
 

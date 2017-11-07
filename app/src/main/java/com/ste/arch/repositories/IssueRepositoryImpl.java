@@ -161,7 +161,7 @@ public class IssueRepositoryImpl implements IssueRepository {
 
                 db.beginTransaction();
                 try {
-                    issueDao.updateTitle(titleold,titlenew);
+                    issueDao.updateTitle(titleold, titlenew);
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
@@ -172,7 +172,6 @@ public class IssueRepositoryImpl implements IssueRepository {
 
         };
     }
-
 
 
     @Override
@@ -187,8 +186,7 @@ public class IssueRepositoryImpl implements IssueRepository {
                     @Override
                     public IssueDataModel apply(IssueDataModel input) {
                         IssueDataModel temp = input;
-                        if (temp!=null)
-                        {
+                        if (temp != null) {
                             input.setTitle(temp.getTitle() + " (.map transformed Source: DB)");
                         }
                         return temp;
@@ -210,20 +208,17 @@ public class IssueRepositoryImpl implements IssueRepository {
             @NonNull
             @Override
             protected LiveData<IssueDataModel> getObject() {
-            // model transformation
+                // model transformation
                 return Transformations.map(obj, new Function<IssueDataModel, IssueDataModel>() {
                     @Override
                     public IssueDataModel apply(IssueDataModel input) {
                         IssueDataModel temp = input;
-                        if (temp!=null)
-                        {
+                        if (temp != null) {
                             input.setTitle(temp.getTitle() + " (.map transformed Source: UI)");
                         }
                         return temp;
                     }
                 });
-
-
 
 
             }

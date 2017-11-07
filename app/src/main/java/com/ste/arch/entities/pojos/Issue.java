@@ -8,8 +8,6 @@ import com.google.gson.annotations.SerializedName;
 public class Issue  {
 
 
-    //@PrimaryKey(autoGenerate = true)
-    //private int id;
     @SerializedName("id")
     @Expose
     private int id;

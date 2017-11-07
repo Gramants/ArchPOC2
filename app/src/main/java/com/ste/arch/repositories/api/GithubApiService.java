@@ -1,6 +1,6 @@
 package com.ste.arch.repositories.api;
 
-import com.ste.arch.entities.IssueResponse;
+
 import com.ste.arch.entities.pojos.Contributor;
 import com.ste.arch.entities.pojos.Issue;
 

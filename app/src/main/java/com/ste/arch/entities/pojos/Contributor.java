@@ -3,14 +3,10 @@ package com.ste.arch.entities.pojos;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Stefano on 07/10/2017.
- */
+
 
 public class Contributor {
 
-    //@PrimaryKey(autoGenerate = true)
-    //private int id;
     @SerializedName("id")
     @Expose
     private int id;
