@@ -17,7 +17,10 @@
 package com.ste.arch.utils;
 
 import android.arch.lifecycle.LiveData;
+import android.util.Log;
 
+
+import com.ste.arch.repositories.Resource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -36,7 +39,7 @@ public class LiveDataCallAdapterFactory extends CallAdapter.Factory {
         }
         Type observableType = getParameterUpperBound(0, (ParameterizedType) returnType);
         Class<?> rawObservableType = getRawType(observableType);
-        if (rawObservableType != Response.class) {
+        if (rawObservableType != Resource.class) {
             throw new IllegalArgumentException("type must be a resource");
         }
         if (! (observableType instanceof ParameterizedType)) {

@@ -50,6 +50,12 @@ public class Issue  {
         this.error=false;
     }
 
+    public Issue(String title, String body,int id) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+    }
+
     public Issue(Boolean error){
         this.error=error;
     }

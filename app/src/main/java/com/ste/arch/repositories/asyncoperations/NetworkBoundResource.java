@@ -41,9 +41,8 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
         result.addSource(apiResponse, response -> {
             result.removeSource(apiResponse);
             result.removeSource(dbSource);
-            //noinspection ConstantConditions
+
             if (response.status.equals(Status.SUCCESS)) {
-                Log.e("STEFANO","success");
                 saveResultAndReInit(response.data);
 
             } else {
@@ -52,32 +51,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
             }
         });
-
-
-/*
-        createCall().enqueue(new Callback<RequestType>() {
-            @Override
-            public void onResponse(Call<RequestType> call, Response<RequestType> response) {
-                result.removeSource(dbSource);
-                if (response.isSuccessful()) {
-                    saveResultAndReInit(response.body());
-                } else {
-                    onFetchFailed();
-                    result.removeSource(dbSource);
-                    result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message(), newData)));
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<RequestType> call, Throwable t) {
-                onFetchFailed();
-                result.removeSource(dbSource);
-                result.addSource(dbSource, newData -> result.setValue(Resource.error(t.getMessage(), newData)));
-            }
-        });
-        */
 
 
     }

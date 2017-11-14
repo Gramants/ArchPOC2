@@ -31,11 +31,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A Retrofit adapterthat converts the Call into a LiveData of ApiResponse.
+ * A Retrofit adapterthat converts the Call into a LiveData of Resource.
+ *
  * @param <RequestType>
  */
 public class LiveDataCallAdapter<RequestType> implements CallAdapter<RequestType, LiveData<Resource<RequestType>>> {
     private final Type responseType;
+
     public LiveDataCallAdapter(Type responseType) {
         this.responseType = responseType;
     }
@@ -49,6 +51,7 @@ public class LiveDataCallAdapter<RequestType> implements CallAdapter<RequestType
     public LiveData<Resource<RequestType>> adapt(Call<RequestType> call) {
         return new LiveData<Resource<RequestType>>() {
             AtomicBoolean started = new AtomicBoolean(false);
+
             @Override
             protected void onActive() {
                 super.onActive();
@@ -56,15 +59,11 @@ public class LiveDataCallAdapter<RequestType> implements CallAdapter<RequestType
                     call.enqueue(new Callback<RequestType>() {
                         @Override
                         public void onResponse(Call<RequestType> call, Response<RequestType> response) {
-                            Log.e("STEFANO","onresponse");
                             if (response.isSuccessful()) {
                                 postValue(Resource.success(response.body()));
                             } else {
-
                                 postValue(Resource.error(response.message(), null));
-
                             }
-
                         }
 
                         @Override

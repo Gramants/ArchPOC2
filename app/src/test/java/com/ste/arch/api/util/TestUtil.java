@@ -16,7 +16,6 @@
 
 package com.ste.arch.api.util;
 
-import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.entities.pojos.Issue;
 
 import java.util.ArrayList;
@@ -25,29 +24,19 @@ import java.util.List;
 public class TestUtil {
 
 
-    public static List<IssueDataModel> createIssueDataModelList(int count, String title, String body) {
-        List<IssueDataModel> issues = new ArrayList<>();
+
+    public static List<Issue> createIssues(int count, String title, String body){
+        List<Issue> repos = new ArrayList<>();
         for(int i = 0; i < count; i ++) {
-            issues.add(createIssueDataModel(title + i, body + i));
+            repos.add(createRepo(title+ i, body + i, i));
         }
-        return issues;
+        return repos;
     }
 
-    public static IssueDataModel createIssueDataModel(String title,String body) {
-        return new  IssueDataModel("ste", "ste", 1, title, "ste", "ste", body, "ste", "ste");
+    public static Issue createRepo(String title, String body, int i) {
+        return new Issue(title,body,i);
     }
 
-    public static List<Issue> createIssueList(int count, String title, String body) {
-        List<Issue> issues = new ArrayList<>();
-        for(int i = 0; i < count; i ++) {
-            issues.add(createIssue(title + i, body + i));
-        }
-        return issues;
-    }
 
-    public static Issue createIssue(String title,String body) {
-        return new Issue ("ste", "ste", 1, title, "ste", "ste", title,1);
-
-        }
 
 }

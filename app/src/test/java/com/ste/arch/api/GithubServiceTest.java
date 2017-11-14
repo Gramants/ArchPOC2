@@ -6,6 +6,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.repositories.api.GithubApiService;
+import com.ste.arch.utils.LiveDataCallAdapterFactory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +37,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
+import static com.ste.arch.api.util.LiveDataTestUtil.getValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -55,19 +57,13 @@ public class GithubServiceTest {
     private MockWebServer mockWebServer;
 
 
-    //https://github.com/square/retrofit/blob/master/retrofit-adapters/java8/src/test/java/retrofit2/adapter/java8/CompletableFutureTest.java
-    //https://github.com/sliskiCode/Robust-unit-testing-in-Android/blob/master/RobustUnitTestingInAndroid/src/main/kotlin/com/code/sliski/postlistscreen/di/PostListModule.kt
-//https://blog.davidmedenjak.com/android/2016/11/22/mocking-api-calls.html
-    //http://thedeveloperworldisyours.com/android/test-server-call-mockito-retrofit-rxjava/
-    //https://github.com/codepath/android_guides/wiki/Consuming-APIs-with-Retrofit
-
     @Before
     public void createService() throws IOException {
         mockWebServer = new MockWebServer();
         service = new Retrofit.Builder()
                 .baseUrl(mockWebServer.url("/"))
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .build()
                 .create(GithubApiService.class);
     }
@@ -81,28 +77,14 @@ public class GithubServiceTest {
     public void getAllIssues() throws IOException, InterruptedException {
         enqueueResponse("issues.json");
 
-
-        service.getIssues("test", "test").enqueue(new Callback<List<Issue>>() {
-
-
-            @Override
-            public void onResponse(Call<List<Issue>> call, retrofit2.Response<List<Issue>> response) {
-                assertThat(response.body(), notNullValue());
-                assertThat(response.body().size(), is(1));
-                Issue issue = response.body().get(0);
-                assertThat(issue.getTitle(), is("Found a bug"));
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Issue>> call, Throwable t) {
-
-            }
-        });
-
-
+        List<Issue> issues = getValue(service.getIssues("test", "test")).data;
         RecordedRequest request = mockWebServer.takeRequest();
+
         assertThat(request.getPath(), is("/repos/test/test/issues"));
+        assertThat(issues.size(), is(1));
+
+        Issue issue = issues.get(0);
+        assertThat(issue.getTitle(), is("Found a bug"));
 
     }
 

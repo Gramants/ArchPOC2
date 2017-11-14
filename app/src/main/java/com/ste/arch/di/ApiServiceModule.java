@@ -59,15 +59,10 @@ public class ApiServiceModule {
         return GsonConverterFactory.create();
     }
 
-    @Provides
-    @Singleton
-    CallAdapter.Factory provideRxJavaAdapterFactory() {
-        return RxJava2CallAdapterFactory.create();
-    }
 
     @Provides
     @Singleton
-    LiveDataCallAdapterFactory provideLiveDataAdapterFactory() {
+    CallAdapter.Factory provideLiveDataAdapterFactory() {
         return new LiveDataCallAdapterFactory();
     }
 
@@ -75,10 +70,10 @@ public class ApiServiceModule {
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit(@Named(BASE_URL) String baseUrl, OkHttpClient client) {
+    Retrofit provideRetrofit(@Named(BASE_URL) String baseUrl, OkHttpClient client,Converter.Factory converterfactory,CallAdapter.Factory calladapter) {
         return new Retrofit.Builder().baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
+                .addConverterFactory(converterfactory)
+                .addCallAdapterFactory(calladapter)
                 .client(client)
                 .build();
     }
