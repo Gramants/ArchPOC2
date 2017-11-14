@@ -3,6 +3,7 @@ package com.ste.arch.di;
 import com.ste.arch.Config;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.api.HeaderInterceptor;
+import com.ste.arch.utils.LiveDataCallAdapterFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -66,11 +67,18 @@ public class ApiServiceModule {
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit(@Named(BASE_URL) String baseUrl, Converter.Factory converterFactory,
-                             CallAdapter.Factory callAdapterFactory, OkHttpClient client) {
+    LiveDataCallAdapterFactory provideLiveDataAdapterFactory() {
+        return new LiveDataCallAdapterFactory();
+    }
+
+
+
+    @Provides
+    @Singleton
+    Retrofit provideRetrofit(@Named(BASE_URL) String baseUrl, OkHttpClient client) {
         return new Retrofit.Builder().baseUrl(baseUrl)
-                .addConverterFactory(converterFactory)
-                .addCallAdapterFactory(callAdapterFactory)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .client(client)
                 .build();
     }

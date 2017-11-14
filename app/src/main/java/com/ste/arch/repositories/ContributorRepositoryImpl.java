@@ -101,7 +101,7 @@ public class ContributorRepositoryImpl implements ContributorRepository {
 
             @NonNull
             @Override
-            protected Call<List<Contributor>> createCall() {
+            protected LiveData<Resource<List<Contributor>>> createCall() {
                 return mApiService.getContributors(owner, repo);
             }
         }.getAsLiveData();

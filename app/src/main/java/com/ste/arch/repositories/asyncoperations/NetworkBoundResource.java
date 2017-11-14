@@ -8,8 +8,10 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.ste.arch.repositories.Resource;
+import com.ste.arch.repositories.Status;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,7 +35,26 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     }
 
     private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
+        LiveData<Resource<RequestType>> apiResponse = createCall();
         result.addSource(dbSource, newData -> result.setValue(Resource.loading(newData)));
+
+        result.addSource(apiResponse, response -> {
+            result.removeSource(apiResponse);
+            result.removeSource(dbSource);
+            //noinspection ConstantConditions
+            if (response.status.equals(Status.SUCCESS)) {
+                Log.e("STEFANO","success");
+                saveResultAndReInit(response.data);
+
+            } else {
+                onFetchFailed();
+                result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message, newData)));
+
+            }
+        });
+
+
+/*
         createCall().enqueue(new Callback<RequestType>() {
             @Override
             public void onResponse(Call<RequestType> call, Response<RequestType> response) {
@@ -56,7 +77,12 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                 result.addSource(dbSource, newData -> result.setValue(Resource.error(t.getMessage(), newData)));
             }
         });
+        */
+
+
     }
+
+
 
     @MainThread
     private void saveResultAndReInit(RequestType response) {
@@ -95,7 +121,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     @NonNull
     @MainThread
-    protected abstract Call<RequestType> createCall();
+    protected abstract LiveData<Resource<RequestType>> createCall();
 
     @MainThread
     protected void onFetchFailed() {

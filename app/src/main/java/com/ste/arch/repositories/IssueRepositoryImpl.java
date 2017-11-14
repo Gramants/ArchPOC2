@@ -57,7 +57,6 @@ public class IssueRepositoryImpl implements IssueRepository {
                         db.endTransaction();
                     }
 
-
                 }
             }
 
@@ -102,7 +101,7 @@ public class IssueRepositoryImpl implements IssueRepository {
 
             @NonNull
             @Override
-            protected Call<List<Issue>> createCall() {
+            protected LiveData<Resource<List<Issue>>> createCall() {
                 return mApiService.getIssues(owner, repo);
             }
         }.getAsLiveData();
