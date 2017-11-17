@@ -21,7 +21,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 
+import com.ste.arch.api.util.TestUtil;
 import com.ste.arch.entities.IssueDataModel;
+import com.ste.arch.entities.pojos.Issue;
+import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.IssueRepository;
 import com.ste.arch.repositories.IssueRepositoryImpl;
 import com.ste.arch.repositories.Resource;
@@ -44,6 +47,8 @@ import java.util.List;
 
 import retrofit2.Response;
 
+import static com.ste.arch.api.util.ApiUtil.successCall;
+import static com.ste.arch.entities.translator.DataTranslator.IssueTranslator;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyObject;
@@ -76,15 +81,77 @@ public class IssueRepositoryTest {
 
     @Test
     public void loadContributors() throws IOException {
+
+
+/*
+        MutableLiveData<List<Contributor>> dbData = new MutableLiveData<>();
+        when(dao.loadContributors("foo", "bar")).thenReturn(dbData);
+
+        LiveData<Resource<List<Contributor>>> data = repository.loadContributors("foo",
+                "bar");
+        verify(dao).loadContributors("foo", "bar");
+
+        verify(service, never()).getContributors(anyString(), anyString());
+
+        Repo repo = TestUtil.createRepo("foo", "bar", "desc");
+        Contributor contributor = TestUtil.createContributor(repo, "log", 3);
+        // network does not send these
+        contributor.setRepoOwner(null);
+        contributor.setRepoName(null);
+
+   */
+
+
+
+
         MutableLiveData<List<IssueDataModel>> dbData = new MutableLiveData<>();
         when(dao.getAllIssue()).thenReturn(dbData);
 
-        // verify that when I read the database the service is not firing
+        LiveData<Resource<List<IssueDataModel>>> databaseData = repository.getIssues("test", "test",true);
+
+// verify that when I read the database the service is not firing
         verify(dao).getAllIssue();
         verify(service, never()).getIssues(anyString(), anyString());
 
 
-        LiveData<Resource<List<IssueDataModel>>> data = repository.getIssues("foo", "bar",false);
+        //wrap the custom created list into a mutablelivedata coming from the API
+        //LiveData<Resource<List<IssueDataModel>>> call = successCall(IssueTranslator(TestUtil.createIssues(1,"test","test")));
+        LiveData<Resource<List<Issue>>> call = successCall(TestUtil.createIssues(1,"test","test"));
+
+        //when(service.getIssues("test", "test")).thenReturn(call);
+        when( repository.getIssues("test", "test",true)).thenReturn( IssueTranslator(TestUtil.createIssues(1,"test","test")));
+        Observer<Resource<List<IssueDataModel>>> observer = mock(Observer.class);
+
+        databaseData.observeForever(observer);
+
+        verify(observer).onChanged(Resource.loading( null));
+
+
+
+
+
+
+
+/*
+        //wrap the custom created list into a mutablelivedata coming from the API
+        LiveData<Resource<List<IssueDataModel>>> call = successCall(DataTranslator.IssueTranslator(TestUtil.createIssues(1,"test","test")));
+
+        when(dao.getAllIssue()).thenReturn(call);
+
+        Observer<Resource<List<IssueDataModel>>> observer = mock(Observer.class);
+
+        databaseData.observeForever(observer);
+
+        verify(observer).onChanged(Resource.loading( null));
+
+*/
+
+
+
+
+
+
+        // LiveData<Resource<List<IssueDataModel>>> data = repository.getIssues("foo", "bar",false);
 
 
     }
