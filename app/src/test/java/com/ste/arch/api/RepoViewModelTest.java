@@ -62,19 +62,17 @@ public class RepoViewModelTest {
     @Before
     public void setup() {
         mIssueRepository = mock(IssueRepository.class);
-        repoViewModel = new RepositoryViewModel(mIssueRepository,mContributorRepository,mPersistentStorageProxy);
+        repoViewModel = new RepositoryViewModel(mIssueRepository, mContributorRepository, mPersistentStorageProxy);
         repoViewModel.init();
     }
-
 
 
     @Test
     public void dontFetchWithoutObservers() {
         repoViewModel.getApiIssueResponse();
-        verify(mIssueRepository, never()).getIssues(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),eq(false)
+        verify(mIssueRepository, never()).getIssues(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), eq(false)
         );
     }
-
 
 
     @Test
@@ -82,108 +80,42 @@ public class RepoViewModelTest {
         ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> repo = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Boolean> forceremote = ArgumentCaptor.forClass(Boolean.class);
-        //when I click on the search of the string
-        repoViewModel.setQueryString("a","b",false);
-        // and observe the result
+        // observe the result
         repoViewModel.getApiIssueResponse().observeForever(mock(Observer.class));
+        //when I click on the search of the string
+        repoViewModel.setQueryString("a", "b", false);
+
         // verify that 1 time Iam observing and the value of the search operation is the entry of the query
         verify(mIssueRepository, times(1)).getIssues(user.capture(),
-                repo.capture(),forceremote.capture());
+                repo.capture(), forceremote.capture());
         // nad the entry of the query is that one that I have sent from the query string
         assertThat(user.getValue(), is("a"));
         assertThat(repo.getValue(), is("b"));
     }
 
 
-
-
-
-
-    /*
-
-        @Test
-    public void testNull() {
-        assertThat(repoViewModel.getApiIssueResponse(), NullValue());
-        assertThat(repoViewModel.getApiContributorResponse(), NullValue());
-        verify(mIssueRepository, times(1)).getIssues(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),false);
-    }
-
-
-    @Test
-    public void fetchWhenObserved() {
-        ArgumentCaptor<String> owner = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
-
-        repoViewModel.setId("a", "b");
-        repoViewModel.getRepo().observeForever(mock(Observer.class));
-        verify(repository, times(1)).loadRepo(owner.capture(),
-                name.capture());
-        assertThat(owner.getValue(), is("a"));
-        assertThat(name.getValue(), is("b"));
-    }
-
     @Test
     public void changeWhileObserved() {
-        ArgumentCaptor<String> owner = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
-        repoViewModel.getRepo().observeForever(mock(Observer.class));
 
-        repoViewModel.setId("a", "b");
-        repoViewModel.setId("c", "d");
+        ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> repo = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Boolean> forceremote = ArgumentCaptor.forClass(Boolean.class);
+        // observe the result
+        repoViewModel.getApiIssueResponse().observeForever(mock(Observer.class));
 
-        verify(repository, times(2)).loadRepo(owner.capture(),
-                name.capture());
-        assertThat(owner.getAllValues(), is(Arrays.asList("a", "c")));
-        assertThat(name.getAllValues(), is(Arrays.asList("b", "d")));
+        //when I click on the search of the string
+        repoViewModel.setQueryString("a", "b", false);
+        repoViewModel.setQueryString("c", "d", false);
+
+
+        // verify that 1 time Iam observing and the value of the search operation is the entry of the query
+        verify(mIssueRepository, times(2)).getIssues(user.capture(),
+                repo.capture(), forceremote.capture());
+        // nad the entry of the query is that one that I have sent from the query string
+
+        assertThat(user.getAllValues(), is(Arrays.asList("a", "c")));
+        assertThat(repo.getAllValues(), is(Arrays.asList("b", "d")));
+
     }
 
-    @Test
-    public void contributors() {
-        Observer<Resource<List<Contributor>>> observer = mock(Observer.class);
-        repoViewModel.getContributors().observeForever(observer);
-        verifyNoMoreInteractions(observer);
-        verifyNoMoreInteractions(repository);
-        repoViewModel.setId("foo", "bar");
-        verify(repository).loadContributors("foo", "bar");
-    }
-
-    @Test
-    public void resetId() {
-        Observer<RepoViewModel.RepoId> observer = mock(Observer.class);
-        repoViewModel.repoId.observeForever(observer);
-        verifyNoMoreInteractions(observer);
-        repoViewModel.setId("foo", "bar");
-        verify(observer).onChanged(new RepoViewModel.RepoId("foo", "bar"));
-        reset(observer);
-        repoViewModel.setId("foo", "bar");
-        verifyNoMoreInteractions(observer);
-        repoViewModel.setId("a", "b");
-        verify(observer).onChanged(new RepoViewModel.RepoId("a", "b"));
-    }
-
-    @Test
-    public void retry() {
-        repoViewModel.retry();
-        verifyNoMoreInteractions(repository);
-        repoViewModel.setId("foo", "bar");
-        verifyNoMoreInteractions(repository);
-        Observer<Resource<Repo>> observer = mock(Observer.class);
-        repoViewModel.getRepo().observeForever(observer);
-        verify(repository).loadRepo("foo", "bar");
-        reset(repository);
-        repoViewModel.retry();
-        verify(repository).loadRepo("foo", "bar");
-    }
-
-    @Test
-    public void nullRepoId() {
-        repoViewModel.setId(null, null);
-        Observer<Resource<Repo>> observer1 = mock(Observer.class);
-        Observer<Resource<List<Contributor>>> observer2 = mock(Observer.class);
-        repoViewModel.getRepo().observeForever(observer1);
-        repoViewModel.getContributors().observeForever(observer2);
-        verify(observer1).onChanged(null);
-        verify(observer2).onChanged(null);
-    }
-    */
 }
