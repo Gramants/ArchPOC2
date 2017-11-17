@@ -8,6 +8,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.ste.arch.entities.ContributorDataModel;
 import com.ste.arch.entities.ContributorTransformed;
@@ -28,7 +29,7 @@ import io.reactivex.annotations.Nullable;
 
 public class RepositoryViewModel extends ViewModel {
 
-
+    @VisibleForTesting
     private MutableLiveData<QueryString> mQueryStringObject;
 
     private MutableLiveData<Integer> mSelectedId;
@@ -158,7 +159,7 @@ public class RepositoryViewModel extends ViewModel {
 
 
     // UI insert the search string
-
+    @VisibleForTesting
     //STEP1
     // the initial query string fires 3 transformed stream Load async issues,Load async contributors and send msg to snackbar
     public void setQueryString(String user, String repo, boolean forceremote) {

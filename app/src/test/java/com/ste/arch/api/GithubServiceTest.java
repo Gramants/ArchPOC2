@@ -6,6 +6,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.repositories.api.GithubApiService;
+import com.ste.arch.repositories.database.IssueDao;
 import com.ste.arch.utils.LiveDataCallAdapterFactory;
 
 import org.junit.After;
@@ -41,6 +42,7 @@ import static com.ste.arch.api.util.LiveDataTestUtil.getValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 
 import org.junit.runner.RunWith;
@@ -55,7 +57,7 @@ public class GithubServiceTest {
     private GithubApiService service;
 
     private MockWebServer mockWebServer;
-
+    private IssueDao dao;
 
     @Before
     public void createService() throws IOException {
@@ -66,6 +68,8 @@ public class GithubServiceTest {
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .build()
                 .create(GithubApiService.class);
+
+        dao = mock(IssueDao.class);
     }
 
     @After

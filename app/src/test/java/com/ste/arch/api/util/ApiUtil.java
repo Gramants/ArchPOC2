@@ -30,12 +30,20 @@ import java.util.List;
 import retrofit2.Response;
 
 public class ApiUtil {
-    public static <T> LiveData<Resource<T>> successCall(T data) {
-        return createCall(Response.success(data));
+    public static <T> LiveData<Resource<T>> successResourceCall(T data) {
+        return createResourceCall(Response.success(data));
     }
-    public static <T> LiveData<Resource<T>> createCall(Response<T> response) {
+    public static <T> LiveData<Resource<T>> createResourceCall(Response<T> response) {
         MutableLiveData<Resource<T>> data = new MutableLiveData<>();
         data.setValue(Resource.success(response.body()));
         return data;
     }
+
+    public static <T> LiveData<T> successCall(T results) {
+        MutableLiveData<T> data = new MutableLiveData<>();
+        data.setValue(results);
+        return data;
+    }
+
+
 }
