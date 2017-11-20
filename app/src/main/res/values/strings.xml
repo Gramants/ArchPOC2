@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">ArchDemo</string>
+    <string name="foreground_message">I am coming from background</string>
+  <string name="background_message">I am going to background</string>
 </resources>

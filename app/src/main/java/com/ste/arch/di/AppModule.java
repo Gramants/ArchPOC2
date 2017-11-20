@@ -10,6 +10,7 @@ import com.ste.arch.repositories.api.checknetwork.CheckNetwork;
 import com.ste.arch.repositories.api.checknetwork.CheckNetworkImpl;
 import com.ste.arch.repositories.preferences.PersistentStorageProxy;
 import com.ste.arch.repositories.preferences.PersistentStorageProxyImpl;
+import com.ste.arch.utils.AppLifecycleObserver;
 
 import javax.inject.Singleton;
 
@@ -48,6 +49,13 @@ public class AppModule {
     @Provides
     CheckNetwork provideCheckNetworkImpl(ConnectivityManager connectivitymanager) {
         return new CheckNetworkImpl(connectivitymanager);
-}
+    }
+
+     @Singleton
+     @Provides
+     AppLifecycleObserver provideAppLifecycleObserver(Context ctx) {
+            return new AppLifecycleObserver(ctx);
+
+    }
 
 }
