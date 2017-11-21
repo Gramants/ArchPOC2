@@ -8,9 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ste.arch.R;
+import com.ste.arch.Utils;
 import com.ste.arch.entities.IssueDataModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -48,7 +50,15 @@ public class IssueDataAdapterPaged extends PagedListAdapter<IssueDataModel, Issu
     }
 
     public void addIssues(List<IssueDataModel> issues) {
-        mIssueList.addAll(issues);
+        
+        ArrayList<IssueDataModel> result = new ArrayList<>();
+        for (IssueDataModel issue : issues) {
+            issue.setTitle(issue.getTitle().trim().toUpperCase() + " ORDERED");
+            result.add(issue);
+        }
+        Collections.sort(result, new Utils.CustomComparator());
+
+        mIssueList.addAll(result);
         notifyDataSetChanged();
     }
 
