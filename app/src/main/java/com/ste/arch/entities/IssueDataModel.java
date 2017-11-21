@@ -6,12 +6,38 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.DiffCallback;
 
 import com.ste.arch.Config;
 
 
 @Entity(tableName = Config.ISSUES_TABLE_NAME)
 public class IssueDataModel implements Parcelable {
+
+    public static DiffCallback<IssueDataModel> DIFF_CALLBACK = new DiffCallback<IssueDataModel>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull IssueDataModel oldItem, @NonNull IssueDataModel newItem) {
+            return oldItem.getId() == newItem.getId();
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull IssueDataModel oldItem, @NonNull IssueDataModel newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        IssueDataModel user = (IssueDataModel) obj;
+
+        return user.getId() == this.getId() && user.getTitle() == this.getTitle();
+    }
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

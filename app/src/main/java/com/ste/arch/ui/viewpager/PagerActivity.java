@@ -151,10 +151,17 @@ public class PagerActivity extends DaggerAppCompatActivity {
 
 
         // force network download in activity and save in db for issues and contributors
+        /*
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
                 }
         );
+        */
+        repositoryViewModel.getApiIssueResponsePaged().observe(this,
+                apiResponse -> {
+                }
+        );
+
         repositoryViewModel.getApiContributorResponse().observe(this,
                 apiResponse -> {
                 }

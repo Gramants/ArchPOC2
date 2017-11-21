@@ -3,6 +3,7 @@ package com.ste.arch.repositories;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -12,6 +13,7 @@ import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.AddRecord;
+import com.ste.arch.repositories.asyncoperations.NetworkBoundResourcePaged;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.asyncoperations.SelectRecord;
 import com.ste.arch.repositories.asyncoperations.UpdateRecord;
@@ -105,6 +107,61 @@ public class IssueRepositoryImpl implements IssueRepository {
                 return mApiService.getIssues(owner, repo);
             }
         }.getAsLiveData();
+    }
+
+
+
+
+    @Override
+    public LiveData<PagedList<IssueDataModel>> getIssuesPaged(String user, String repo, Boolean forceremote) {
+        return new NetworkBoundResourcePaged<PagedList<IssueDataModel>, List<Issue>>() {
+            @Override
+            protected void updateAll(List<Issue> response) {
+                if (!response.isEmpty()) {
+                    db.beginTransaction();
+                    try {
+                        issueDao.updateData(DataTranslator.IssueTranslator(response));
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+
+                }
+            }
+
+            @Override
+            protected void deleteAll(List<Issue> response) {
+
+            }
+
+            @Override
+            protected void saveCallResult(@NonNull List<Issue> item) {
+
+            }
+
+            @Override
+            protected Boolean shouldFetch(@Nullable PagedList<IssueDataModel> data) {
+                return forceremote;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<PagedList<IssueDataModel>> loadFromDb() {
+                return issueDao.getAllIssuePaged().create(0,
+                        new PagedList.Config.Builder()
+                                .setEnablePlaceholders(true)
+                                .setPageSize(50)
+                                .setPrefetchDistance(50)
+                                .build());
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<Resource<List<Issue>>> createCall() {
+                return mApiService.getIssues(user, repo);
+            }
+        }.getAsLiveData();
+
     }
 
 

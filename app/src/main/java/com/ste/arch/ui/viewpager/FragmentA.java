@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.ste.arch.R;
 import com.ste.arch.adapters.IssueDataAdapter;
+import com.ste.arch.adapters.IssueDataAdapterPaged;
 import com.ste.arch.adapters.RecyclerItemClickListener;
 import com.ste.arch.entities.IssueDataModel;
 import com.ste.arch.repositories.Status;
@@ -46,7 +47,7 @@ public class FragmentA extends DaggerFragment implements FragmentVisibility {
     private TextView textView2;
     private TextView textView3;
     private ProgressBar mProgress;
-    private IssueDataAdapter mAdapter;
+    private IssueDataAdapterPaged mAdapter;
     private RecyclerView mRecyclerView;
     private List<IssueDataModel> cache;
 
@@ -76,7 +77,7 @@ public class FragmentA extends DaggerFragment implements FragmentVisibility {
         Observer<String> observer = msg -> textView.setText(msg);
         messageRouterViewModel.getMessageContainerA().observe(this, observer);
 
-
+/*
         repositoryViewModel.getApiIssueResponse().observe(this,
                 apiResponse -> {
 
@@ -106,8 +107,21 @@ public class FragmentA extends DaggerFragment implements FragmentVisibility {
 
                 }
         );
+*/
+        repositoryViewModel.getApiIssueResponsePaged().observe(this,
+                apiResponse -> {
+
+                    if (apiResponse!= null) {
+                        cache = apiResponse;
+                        textView2.setText("Issues found:" + String.valueOf(apiResponse.size()));
+                        mAdapter.clearIssues();
+                        mAdapter.addIssues(apiResponse);
+
+                    }
 
 
+                }
+        );
     }
 
 
@@ -139,7 +153,7 @@ public class FragmentA extends DaggerFragment implements FragmentVisibility {
                 mRecyclerView.getContext(), LinearLayoutManager.VERTICAL
         );
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
-        mAdapter = new IssueDataAdapter(getLayoutInflater());
+        mAdapter = new IssueDataAdapterPaged(getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
 
 

@@ -1,6 +1,7 @@
 package com.ste.arch.repositories.database;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.LivePagedListProvider;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -16,6 +17,10 @@ import java.util.List;
 public abstract class IssueDao {
   @Query("SELECT * FROM Issues")
   public abstract LiveData<List<IssueDataModel>> getAllIssue();
+
+  @Query("SELECT * FROM Issues")
+  public abstract LivePagedListProvider<Integer, IssueDataModel> getAllIssuePaged();
+
 
   @Query("SELECT * FROM Issues where id = :id")
   public abstract LiveData<IssueDataModel> getIssueById(int id);

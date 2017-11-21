@@ -7,6 +7,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
@@ -45,6 +46,9 @@ public class RepositoryViewModel extends ViewModel {
     // ISSUE
 //issue list streamer
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
+
+    private LiveData<PagedList<IssueDataModel>> mResultIssueListDataModelPaged;
+
     //issue item object streamers
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModelByObject;
@@ -79,6 +83,8 @@ public class RepositoryViewModel extends ViewModel {
         // init issue List and Item observable
         mResultIssueListDataModel = new MutableLiveData<>();
         // init issue Item  and Id item
+        mResultIssueListDataModelPaged = new MutableLiveData<>();
+
         mResultIssueItemDataModel = new MutableLiveData<>();
         mIssueResultItemMixer = new MediatorLiveData<>();
 
@@ -91,6 +97,10 @@ public class RepositoryViewModel extends ViewModel {
         // UI event transformation
         mResultIssueListDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
+        });
+
+        mResultIssueListDataModelPaged = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
+            return loadIssuesPaged(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
 
         //select a record by id stream on click
@@ -175,6 +185,9 @@ public class RepositoryViewModel extends ViewModel {
         return mIssueRepository.getIssues(user, repo, forceremote);
     }
 
+    public LiveData<PagedList<IssueDataModel>> loadIssuesPaged(String user, String repo, Boolean forceremote) {
+        return mIssueRepository.getIssuesPaged(user, repo, forceremote);
+    }
     //Load async contributors read the issues stream from db or from network passing vars from the object wrapping the search string
 //STEP3.1
     public LiveData<Resource<List<ContributorDataModel>>> loadContributors(String user, String repo, Boolean forceremote) {
@@ -188,6 +201,11 @@ public class RepositoryViewModel extends ViewModel {
     @NonNull
     public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponse() {
         return mResultIssueListDataModel;
+    }
+
+    @NonNull
+    public LiveData<PagedList<IssueDataModel>> getApiIssueResponsePaged() {
+        return mResultIssueListDataModelPaged;
     }
 
     @NonNull
