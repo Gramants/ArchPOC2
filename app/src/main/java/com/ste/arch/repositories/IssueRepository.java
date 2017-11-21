@@ -13,7 +13,7 @@ public interface IssueRepository {
 
     LiveData<Resource<List<IssueDataModel>>> getIssues(String owner, String repo, Boolean forceremote);
 
-    LiveData<PagedList<IssueDataModel>> getIssuesPaged(String user, String repo, Boolean forceremote);
+    LiveData<Resource<PagedList<IssueDataModel>>> getIssuesPaged(String user, String repo, Boolean forceremote);
 
     LiveData<Resource<IssueDataModel>> getIssueRecordById(int id);
 

@@ -111,16 +111,32 @@ public class FragmentA extends DaggerFragment implements FragmentVisibility {
         repositoryViewModel.getApiIssueResponsePaged().observe(this,
                 apiResponse -> {
 
-                    if (apiResponse!= null) {
-                        cache = apiResponse;
-                        textView2.setText("Issues found:" + String.valueOf(apiResponse.size()));
-                        mAdapter.clearIssues();
-                        mAdapter.addIssues(apiResponse);
+                        if (apiResponse.status == Status.ERROR) {
+                            textView3.setText("Error in last query, reason: " + apiResponse.message);
+                            mProgress.setVisibility(View.INVISIBLE);
+                        } else if (apiResponse.status.equals(Status.SUCCESS)) {
+                            textView3.setText("Network call successful for Issues endpoint");
+                            mProgress.setVisibility(View.INVISIBLE);
+                        } else if (apiResponse.status.equals(Status.LOADING)) {
+                            mProgress.setVisibility(View.VISIBLE);
+                            textView3.setText("Loading Issues from network");
+                        } else if (apiResponse.status.equals(Status.SUCCESSFROMDB)) {
+                            textView3.setText("Issue loaded from Room");
+                            mProgress.setVisibility(View.INVISIBLE);
+                        }
+
+
+                        if (apiResponse.data != null) {
+                            cache = apiResponse.data;
+                            textView2.setText("Issues found:" + String.valueOf(apiResponse.data.size()));
+                            mAdapter.clearIssues();
+                            mAdapter.addIssues(apiResponse.data);
+
+                        }
+
+
 
                     }
-
-
-                }
         );
     }
 

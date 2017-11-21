@@ -113,8 +113,8 @@ public class IssueRepositoryImpl implements IssueRepository {
 
 
     @Override
-    public LiveData<PagedList<IssueDataModel>> getIssuesPaged(String user, String repo, Boolean forceremote) {
-        return new NetworkBoundResourcePaged<PagedList<IssueDataModel>, List<Issue>>() {
+    public LiveData<Resource<PagedList<IssueDataModel>>> getIssuesPaged(String user, String repo, Boolean forceremote) {
+        return new NetworkBoundResource<PagedList<IssueDataModel>, List<Issue>>() {
             @Override
             protected void updateAll(List<Issue> response) {
                 if (!response.isEmpty()) {

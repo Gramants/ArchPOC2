@@ -8,30 +8,31 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.ste.arch.repositories.Resource;
 import com.ste.arch.repositories.Status;
 
 public abstract class NetworkBoundResourcePaged<ResultType, RequestType> {
-    private final MediatorLiveData<ResultType> result = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
 
     @MainThread
     public NetworkBoundResourcePaged() {
-        result.setValue(null);
+        result.setValue(Resource.loading(null));
         LiveData<ResultType> dbSource = loadFromDb();
         result.addSource(dbSource, data -> {
             result.removeSource(dbSource);
             if (shouldFetch(data)) {
                 fetchFromNetwork(dbSource);
             } else {
-                result.addSource(dbSource, newData -> result.setValue(newData));
+                result.addSource(dbSource, newData -> result.setValue(Resource.successfromdb(newData)));
             }
         });
     }
 
     private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
         LiveData<Resource<RequestType>> apiResponse = createCall();
-        //result.addSource(dbSource, newData -> result.setValue(Resource.loading(null)));
+        result.addSource(dbSource, newData -> result.setValue(Resource.loading(newData)));
 
         result.addSource(apiResponse, response -> {
             result.removeSource(apiResponse);
@@ -41,8 +42,8 @@ public abstract class NetworkBoundResourcePaged<ResultType, RequestType> {
                 saveResultAndReInit(response.data);
 
             } else {
-                onFetchFailed();
-                //result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message,newData.)));
+                onFetchFailed(response.message);
+                result.addSource(dbSource, newData -> result.setValue(Resource.error(response.message, newData)));
 
             }
         });
@@ -66,7 +67,7 @@ public abstract class NetworkBoundResourcePaged<ResultType, RequestType> {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                result.addSource(loadFromDb(), newData -> result.setValue(newData));
+                result.addSource(loadFromDb(), newData -> result.setValue(Resource.success(newData)));
             }
         }.execute();
     }
@@ -92,10 +93,11 @@ public abstract class NetworkBoundResourcePaged<ResultType, RequestType> {
     protected abstract LiveData<Resource<RequestType>> createCall();
 
     @MainThread
-    protected void onFetchFailed() {
-    }
+    protected abstract void onFetchFailed(String errormessage);
+    @MainThread
+    protected abstract void onLoading();
 
-    public final LiveData<ResultType> getAsLiveData() {
+    public final LiveData<Resource<ResultType>> getAsLiveData() {
         return result;
     }
 }

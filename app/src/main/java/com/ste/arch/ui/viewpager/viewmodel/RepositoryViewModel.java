@@ -47,7 +47,7 @@ public class RepositoryViewModel extends ViewModel {
 //issue list streamer
     private LiveData<Resource<List<IssueDataModel>>> mResultIssueListDataModel;
 
-    private LiveData<PagedList<IssueDataModel>> mResultIssueListDataModelPaged;
+    private LiveData<Resource<PagedList<IssueDataModel>>> mResultIssueListDataModelPaged;
 
     //issue item object streamers
     private LiveData<Resource<IssueDataModel>> mResultIssueItemDataModel;
@@ -95,9 +95,11 @@ public class RepositoryViewModel extends ViewModel {
 
         //Load async issues   //STEP2-a
         // UI event transformation
+        /*
         mResultIssueListDataModel = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssues(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
         });
+        */
 
         mResultIssueListDataModelPaged = Transformations.switchMap(mQueryStringObject, mQueryStringObject -> {
             return loadIssuesPaged(mQueryStringObject.getUser(), mQueryStringObject.getRepo(), mQueryStringObject.getForceremote());
@@ -181,11 +183,13 @@ public class RepositoryViewModel extends ViewModel {
 //Load async issues read the issues stream from db or from network passing vars from the object wrapping the search string
 //STEP3
 
+    /*
     public LiveData<Resource<List<IssueDataModel>>> loadIssues(String user, String repo, Boolean forceremote) {
         return mIssueRepository.getIssues(user, repo, forceremote);
     }
+    */
 
-    public LiveData<PagedList<IssueDataModel>> loadIssuesPaged(String user, String repo, Boolean forceremote) {
+    public LiveData<Resource<PagedList<IssueDataModel>>> loadIssuesPaged(String user, String repo, Boolean forceremote) {
         return mIssueRepository.getIssuesPaged(user, repo, forceremote);
     }
     //Load async contributors read the issues stream from db or from network passing vars from the object wrapping the search string
@@ -204,7 +208,7 @@ public class RepositoryViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<PagedList<IssueDataModel>> getApiIssueResponsePaged() {
+    public LiveData<Resource<PagedList<IssueDataModel>>> getApiIssueResponsePaged() {
         return mResultIssueListDataModelPaged;
     }
 
