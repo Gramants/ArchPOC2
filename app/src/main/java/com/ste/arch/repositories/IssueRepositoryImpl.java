@@ -13,7 +13,6 @@ import com.ste.arch.entities.pojos.Issue;
 import com.ste.arch.entities.translator.DataTranslator;
 import com.ste.arch.repositories.api.GithubApiService;
 import com.ste.arch.repositories.asyncoperations.AddRecord;
-import com.ste.arch.repositories.asyncoperations.NetworkBoundResourcePaged;
 import com.ste.arch.repositories.asyncoperations.SelectObject;
 import com.ste.arch.repositories.asyncoperations.SelectRecord;
 import com.ste.arch.repositories.asyncoperations.UpdateRecord;
@@ -27,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
-
-
-import retrofit2.Call;
 
 
 public class IssueRepositoryImpl implements IssueRepository {
