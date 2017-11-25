@@ -202,10 +202,6 @@ public class RepositoryViewModel extends ViewModel {
 // async issues observable, observed by UI
 //STEP4
 
-    @NonNull
-    public LiveData<Resource<List<IssueDataModel>>> getApiIssueResponse() {
-        return mResultIssueListDataModel;
-    }
 
     @NonNull
     public LiveData<Resource<PagedList<IssueDataModel>>> getApiIssueResponsePaged() {

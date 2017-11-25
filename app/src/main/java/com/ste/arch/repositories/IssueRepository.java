@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IssueRepository {
 
-    LiveData<Resource<List<IssueDataModel>>> getIssues(String owner, String repo, Boolean forceremote);
+    //LiveData<Resource<List<IssueDataModel>>> getIssues(String owner, String repo, Boolean forceremote);
 
     LiveData<Resource<PagedList<IssueDataModel>>> getIssuesPaged(String user, String repo, Boolean forceremote);
 

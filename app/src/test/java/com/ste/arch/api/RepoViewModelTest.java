@@ -69,8 +69,8 @@ public class RepoViewModelTest {
 
     @Test
     public void dontFetchWithoutObservers() {
-        repoViewModel.getApiIssueResponse();
-        verify(mIssueRepository, never()).getIssues(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), eq(false)
+        repoViewModel.getApiIssueResponsePaged();
+        verify(mIssueRepository, never()).getIssuesPaged(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), eq(false)
         );
     }
 
@@ -81,12 +81,12 @@ public class RepoViewModelTest {
         ArgumentCaptor<String> repo = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Boolean> forceremote = ArgumentCaptor.forClass(Boolean.class);
         // observe the result
-        repoViewModel.getApiIssueResponse().observeForever(mock(Observer.class));
+        repoViewModel.getApiIssueResponsePaged().observeForever(mock(Observer.class));
         //when I click on the search of the string
         repoViewModel.setQueryString("a", "b", false);
 
         // verify that 1 time Iam observing and the value of the search operation is the entry of the query
-        verify(mIssueRepository, times(1)).getIssues(user.capture(),
+        verify(mIssueRepository, times(1)).getIssuesPaged(user.capture(),
                 repo.capture(), forceremote.capture());
         // nad the entry of the query is that one that I have sent from the query string
         assertThat(user.getValue(), is("a"));
@@ -101,7 +101,7 @@ public class RepoViewModelTest {
         ArgumentCaptor<String> repo = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Boolean> forceremote = ArgumentCaptor.forClass(Boolean.class);
         // observe the result
-        repoViewModel.getApiIssueResponse().observeForever(mock(Observer.class));
+        repoViewModel.getApiIssueResponsePaged().observeForever(mock(Observer.class));
 
         //when I click on the search of the string
         repoViewModel.setQueryString("a", "b", false);
@@ -109,7 +109,7 @@ public class RepoViewModelTest {
 
 
         // verify that 1 time Iam observing and the value of the search operation is the entry of the query
-        verify(mIssueRepository, times(2)).getIssues(user.capture(),
+        verify(mIssueRepository, times(2)).getIssuesPaged(user.capture(),
                 repo.capture(), forceremote.capture());
         // nad the entry of the query is that one that I have sent from the query string
 
